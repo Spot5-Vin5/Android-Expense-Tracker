@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/userExpense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- TextView for the Add Expense label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Expense"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"/>
+
+        <!-- TextView for the Amount label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Amount ($)"
+            android:textSize="18sp"/>
+
+        <!-- EditText for the Amount input -->
+        <EditText
+            android:id="@+id/amountInputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter amount"
+            android:inputType="numberDecimal"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Your existing layout elements -->
+
+        <!-- Button to show DatePicker -->
+        <Button
+            android:id="@+id/showDatePickerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Date"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"/>
+
+        <!-- DatePicker to select date -->
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView to display selected date -->
+        <TextView
+            android:id="@+id/selectedDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView for the CategoryActivity label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Spinner for CategoryActivity selection -->
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView for the Subcategory label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subcategory"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Spinner for Subcategory selection -->
+        <Spinner
+            android:id="@+id/subCategorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView for the Payment Type label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Type"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Spinner for Payment Type selection -->
+        <Spinner
+            android:id="@+id/paymentTypeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView for the Payment Subtype label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Subtype"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Spinner for Payment Subtype selection -->
+        <Spinner
+            android:id="@+id/paymentSubtypeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- TextView for the Note label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Note"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- EditText for Note input -->
+        <EditText
+            android:id="@+id/noteInputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter note"
+            android:inputType="textMultiLine"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Your existing layout elements -->
+
+        <!-- Button to submit the form -->
+        <Button
+            android:id="@+id/submitFormButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
