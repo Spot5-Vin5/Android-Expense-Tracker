@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appHomeMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <!-- android:background="#F3EDE5"> -->
+
+
+    <!-- Section 1: HOME Text View -->
+    <TextView
+        android:id="@+id/home_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="Home"
+        android:textColor="#000"
+        android:textSize="24sp" />
+
+    <!-- Section 2: Top Section -->
+    <LinearLayout
+        android:id="@+id/top_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/home_text"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Good Morning, User!"
+            android:textColor="#000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Balance: $5,320"
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/view_all_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="View All"
+            android:textColor="#0000EE"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Section 3: Expense Overview Text View -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_section"
+        android:layout_marginBottom="16dp"
+        android:drawableEnd="@drawable/ic_expand_more"
+        android:drawablePadding="8dp"
+        android:text="EXPENSE OVERVIEW"
+        android:textColor="#000"
+        android:textSize="12sp" />
+
+    <!-- Section 4: Pie Chart -->
+  <!--  <FrameLayout
+        android:id="@+id/pie_chart_container"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@id/top_section"
+        android:layout_marginBottom="16dp">
+
+        &lt;!&ndash; Here you can add your PieChart view dynamically or use a library &ndash;&gt;
+    </FrameLayout>-->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pie_chart_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/top_section"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Section 5: Dynamic ListView for Categories -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@id/bottom_navigation"
+        android:layout_below="@id/pie_chart_container"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/home_category_model_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="8dp"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#D1C4E9"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:weightSum="3">
+
+        <Button
+            android:id="@+id/appHomeMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/purple_200"
+            android:text="Menu"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/addExpense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/purple_200"
+            android:text="Add"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/purple_200"
+            android:text="Profile"
+            android:textColor="#fff" />
+    </LinearLayout>
+</RelativeLayout>

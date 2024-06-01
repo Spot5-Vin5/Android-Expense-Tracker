@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/budgetMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Centered "Budget" text -->
+    <TextView
+        android:id="@+id/textViewBudget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Budget"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp" />
+
+    <!-- Container for displaying the limit value -->
+    <LinearLayout
+        android:id="@+id/limitContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewBudget"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <!-- Left side: "Limit" label -->
+        <TextView
+            android:id="@+id/textViewLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Limit:" />
+
+        <!-- Right side: Displayed value inside a rectangle box -->
+        <TextView
+            android:id="@+id/textViewLimitValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle_box"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="showLimitDialog"
+            android:padding="8dp"
+            android:text="Budget"
+            android:textSize="16sp" />
+    </LinearLayout>
+</RelativeLayout>
