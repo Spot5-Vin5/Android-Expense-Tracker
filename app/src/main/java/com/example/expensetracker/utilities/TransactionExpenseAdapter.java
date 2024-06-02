@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.expensetracker.R;
@@ -16,23 +17,23 @@ import java.util.List;
 public class TransactionExpenseAdapter extends BaseAdapter {
 
     private Context context;
-    private List<TransactionModel> expenseList;
+    private List<TransactionModel> expensetransactionsList;
     private LayoutInflater inflater;
 
     public TransactionExpenseAdapter(Context context, List<TransactionModel> expenseList) {
         this.context = context;
-        this.expenseList = expenseList;
+        this.expensetransactionsList = expenseList;
         this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return expenseList.size();
+        return expensetransactionsList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return expenseList.get(position);
+        return expensetransactionsList.get(position);
     }
 
     @Override
@@ -43,30 +44,43 @@ public class TransactionExpenseAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.activity_list_item_transactions, parent, false);
+            convertView = inflater.inflate(R.layout.activity_list_item_expense_transactions, parent, false);
         }
 
-        TextView expenseName = convertView.findViewById(R.id.expenseName);
-        ImageButton editButton = convertView.findViewById(R.id.editButton);
-        ImageButton deleteButton = convertView.findViewById(R.id.deleteButton);
+        TextView date = convertView.findViewById(R.id.tvDate); // Corrected ID
+        TextView amount = convertView.findViewById(R.id.tvAmount); // Corrected ID
+        TextView category = convertView.findViewById(R.id.tvCategory); // Corrected ID
+        TextView subCategory = convertView.findViewById(R.id.tvSubCategory); // Corrected ID
+        TextView paymentType = convertView.findViewById(R.id.tvPaymentType); // Corrected ID
+        TextView paymentSubType = convertView.findViewById(R.id.tvSubPaymentType); // Corrected ID
+        TextView note = convertView.findViewById(R.id.tvNote); // Corrected ID
+        ImageButton moreOptions = convertView.findViewById(R.id.btnMoreOptions); // Corrected ID
 
-        TransactionModel expense = expenseList.get(position);
-        expenseName.setText(expense.getCategoryType());
+        TransactionModel transaction = expensetransactionsList.get(position);
+        date.setText(transaction.getDate());
+        amount.setText(transaction.getAmount());
+        category.setText(transaction.getCategoryType());
+        if (transaction.getCategorySubType() != null) {
+            subCategory.setText(transaction.getCategorySubType());
+            subCategory.setVisibility(View.VISIBLE);
+        } else {
+            subCategory.setVisibility(View.GONE);
+        }
+        paymentType.setText(transaction.getPaymentType());
+        if (transaction.getPaymentSubType() != null) {
+            paymentSubType.setText(transaction.getPaymentSubType());
+            paymentSubType.setVisibility(View.VISIBLE);
+        } else {
+            paymentSubType.setVisibility(View.GONE);
+        }
+        if (transaction.getNote() != null) {
+            note.setText(transaction.getNote());
+            note.setVisibility(View.VISIBLE);
+        } else {
+            note.setVisibility(View.GONE);
+        }
 
-        // Set listeners for edit and delete buttons if needed
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle edit button click
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle delete button click
-            }
-        });
+        // Implement popup for moreOptions button if needed
 
         return convertView;
     }

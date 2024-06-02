@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/item_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Date: 01/06/2024"
+            android:textColor="@color/black"
+            android:padding="4dp"/>
+
+        <TextView
+            android:id="@+id/tvAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Amount: 1000"
+            android:textColor="@color/black"
+            android:padding="4dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tvCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Category: Food"
+            android:textColor="@color/black"
+            android:padding="4dp"/>
+
+        <TextView
+            android:id="@+id/tvSubCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SubCategory: Dinner"
+            android:textColor="@color/black"
+            android:padding="4dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tvPaymentType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Payment: CreditCard"
+            android:textColor="@color/black"
+            android:padding="4dp"/>
+
+        <TextView
+            android:id="@+id/tvSubPaymentType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SubType: ICICI"
+            android:textColor="@color/black"
+            android:padding="4dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Note: Party"
+        android:textColor="@color/black"
+        android:padding="4dp"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/btnMoreOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_more_vert"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="More options" />
+</LinearLayout>
