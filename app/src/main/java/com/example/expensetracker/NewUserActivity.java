@@ -170,6 +170,22 @@ public class NewUserActivity extends AppCompatActivity {
             //expense.getRow(4).createCell(5).setCellValue("");
             //expense.getRow(4).createCell(6).setCellValue("");
 
+            expense.createRow(5).createCell(0).setCellValue("01-05-2024");
+            expense.getRow(5).createCell(1).setCellValue("2300");
+            expense.getRow(5).createCell(2).setCellValue("Fuel");
+            expense.getRow(5).createCell(3).setCellValue("Petrol");
+            expense.getRow(5).createCell(4).setCellValue("Credit Card");
+            expense.getRow(5).createCell(5).setCellValue("SBI BPCL");
+            expense.getRow(5).createCell(6).setCellValue("KPHB");
+
+            expense.createRow(6).createCell(0).setCellValue("10-05-2024");
+            expense.getRow(6).createCell(1).setCellValue("2300");
+            expense.getRow(6).createCell(2).setCellValue("Fuel");
+            expense.getRow(6).createCell(3).setCellValue("Petrol");
+            expense.getRow(6).createCell(4).setCellValue("Cash");
+            //expense.getRow(6).createCell(5).setCellValue("");
+            //expense.getRow(6).createCell(6).setCellValue("");
+
 
             XSSFSheet profileSheet = workbook.createSheet(PROFILE_ACTIVITY);
             profileSheet.createRow(0).createCell(0).setCellValue(PROFILE_ACTIVITY);

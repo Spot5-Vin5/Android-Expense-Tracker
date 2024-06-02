@@ -1,9 +1,12 @@
 package com.example.expensetracker;
 
 import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
+import static com.example.expensetracker.utilities.HeadingConstants.CASH;
+import static com.example.expensetracker.utilities.HeadingConstants.CASH1;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
@@ -53,6 +56,10 @@ public class AppHomeActivity extends AppCompatActivity {
     private int totalMonthExpense = 0;
     private HashMap<String, Integer> eachCategoryAmount = new HashMap<>();
     private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
+
+    public HashMap<String, Integer> getEachPaymentTypeAmount() {
+        return eachPaymentTypeAmount;
+    }
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -246,6 +253,18 @@ public class AppHomeActivity extends AppCompatActivity {
                             System.out.println("inside AppHomeActivity class, inside calculateEachPaymentTypeAmount () 5 of 7 if" + eachPaymentTypeAmount);
                         } else {
                             eachPaymentTypeAmount.put(subPayment, eachPaymentTypeAmount.get(subPayment) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside AppHomeActivity class, inside calculateEachPaymentTypeAmount () 6 of 7 else" + eachPaymentTypeAmount);
+                        }
+                    }
+
+                    // to handle cash payment
+                    if ((rowExpenseMap.get(PAYMENT).equals(CASH)) || (rowExpenseMap.get(PAYMENT).equals(CASH1)) && amountStr != null) {
+
+                        if (eachPaymentTypeAmount.isEmpty() || !eachPaymentTypeAmount.containsKey(CASH) || !eachPaymentTypeAmount.containsKey(CASH1)) {
+                            eachPaymentTypeAmount.put(CASH, Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside AppHomeActivity class, inside calculateEachPaymentTypeAmount () 5 of 7 if" + eachPaymentTypeAmount);
+                        } else {
+                            eachPaymentTypeAmount.put(CASH, eachPaymentTypeAmount.get(CASH) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
                             System.out.println("inside AppHomeActivity class, inside calculateEachPaymentTypeAmount () 6 of 7 else" + eachPaymentTypeAmount);
                         }
                     }

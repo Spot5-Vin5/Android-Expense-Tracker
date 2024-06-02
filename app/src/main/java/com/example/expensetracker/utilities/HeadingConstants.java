@@ -25,6 +25,10 @@ public class HeadingConstants {
     public static final String PAYMENT_SUBTYPE ="PaymentSubtype";
     public static final String NOTE = "Note";
 
+    public static final String CASH = "Cash";
+    public static final String CASH1 = "cash";
+    public static final String CHECK = "Check";
+
 
     public static final HashMap<String, Integer> expenseColumnIndices = new HashMap<String, Integer>();
     static {

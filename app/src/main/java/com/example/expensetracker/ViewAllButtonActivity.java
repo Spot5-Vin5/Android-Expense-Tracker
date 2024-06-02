@@ -14,6 +14,7 @@ import com.example.expensetracker.utilities.PaymentTypeExpenseAdapter;
 import com.example.expensetracker.utilities.TransactionExpenseAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ViewAllButtonActivity extends AppCompatActivity {
@@ -52,18 +53,23 @@ public class ViewAllButtonActivity extends AppCompatActivity {
 
         // Initialize the transactionlist and paymentslist with sample data
         List<TransactionModel> transactions = new ArrayList<>();
-        transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card","ICICI", "party"));
-        transactions.add(new TransactionModel("23-05-2024", "300", "Food", "Dinner", "Credit card","1Card", "party"));
-        transactions.add(new TransactionModel("25-05-2024", "5000", "Fuel", "Petrol", "Credit card","SBI BPCL", "Travel"));
-        transactions.add(new TransactionModel("29-05-2024", "300", "Shopping", "Petrol", "cash","", "Travel"));
-        transactions.add(new TransactionModel("5-05-2024", "5020", "Bills", "", "Credit card","SBI BPCL", "Travel"));
-        transactions.add(new TransactionModel("19-05-2024", "200", "Grociries", "", "cash","", ""));
+        transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
+        transactions.add(new TransactionModel("23-05-2024", "300", "Food", "Dinner", "Credit card", "1Card", "party"));
+        transactions.add(new TransactionModel("25-05-2024", "5000", "Fuel", "Petrol", "Credit card", "SBI BPCL", "Travel"));
+        transactions.add(new TransactionModel("29-05-2024", "300", "Shopping", "Petrol", "cash", "", "Travel"));
+        transactions.add(new TransactionModel("5-05-2024", "5020", "Bills", "", "Credit card", "SBI BPCL", "Travel"));
+        transactions.add(new TransactionModel("19-05-2024", "200", "Grociries", "", "cash", "", ""));
 
         List<PaymentsModel> paymentTypes = new ArrayList<>();
-        paymentTypes.add(new PaymentsModel("ICICI" , "1000"));
-        paymentTypes.add(new PaymentsModel("1Card" , "2000"));
-        paymentTypes.add(new PaymentsModel("1Card" , "4000"));
-        paymentTypes.add(new PaymentsModel("Cash" , "5000"));
+     /*   AppHomeActivity appHomeActivity = new AppHomeActivity();
+        HashMap<String, Integer> v = appHomeActivity.getEachPaymentTypeAmount();
+        for (String payment : v.keySet()) {
+            paymentTypes.add(new PaymentsModel(payment, v.get(payment).toString()));
+        }*/
+        paymentTypes.add(new PaymentsModel("ICICI", "1000"));
+        paymentTypes.add(new PaymentsModel("1Card", "2000"));
+        paymentTypes.add(new PaymentsModel("1Card", "4000"));
+        paymentTypes.add(new PaymentsModel("Cash", "5000"));
 
         TransactionExpenseAdapter transactionsAdapter = new TransactionExpenseAdapter(this, transactions);
         PaymentTypeExpenseAdapter paymentsAdapter = new PaymentTypeExpenseAdapter(this, paymentTypes);

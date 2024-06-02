@@ -25,12 +25,12 @@ public class HomeCategoryAdapter extends ArrayAdapter<HomeCategoryModel> {
         TextView percentage;
     }
     private final Context context;
-    private final List<HomeCategoryModel> expenses;
+    private final List<HomeCategoryModel> categoryExpenses;
 
-    public HomeCategoryAdapter(Context context, List<HomeCategoryModel> expenses) {
-        super(context, R.layout.activity_list_item_transactions, expenses);
+    public HomeCategoryAdapter(Context context, List<HomeCategoryModel> categoryExpenses) {
+        super(context, R.layout.activity_list_item_home_categories, categoryExpenses);
         this.context = context;
-        this.expenses = expenses;
+        this.categoryExpenses = categoryExpenses;
     }
 
     @NonNull
@@ -50,7 +50,7 @@ public class HomeCategoryAdapter extends ArrayAdapter<HomeCategoryModel> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        HomeCategoryModel expense = expenses.get(position);
+        HomeCategoryModel expense = categoryExpenses.get(position);
         holder.icon.setImageResource(expense.getIconResId());
         holder.name.setText(expense.getName());
         holder.amount.setText(expense.getAmount());
