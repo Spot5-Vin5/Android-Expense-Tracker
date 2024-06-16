@@ -1,6 +1,14 @@
 package com.example.expensetracker;
 
-import android.graphics.Color;
+import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
+import static com.example.expensetracker.utilities.HeadingConstants.CASH;
+import static com.example.expensetracker.utilities.HeadingConstants.CASH1;
+import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
+import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
 import com.example.expensetracker.utilities.PaymentTypeExpenseAdapter;
+import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 import com.example.expensetracker.utilities.TransactionExpenseAdapter;
 
 import java.util.ArrayList;
@@ -24,8 +34,20 @@ public class ViewAllButtonActivity extends AppCompatActivity {
     private Button btnTransactions;
     private Button btnPayments;
 
+    private HashMap<String, ArrayList<String>> paymentToSubPaymentMap = new HashMap<>();
+    private ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel;
+    private ArrayList<String> readAllSubPaymentListFromSheet;
+    private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
+    private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
+    private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
+    private ArrayList<String> readAllPaymentTypeListFromSheet;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_button);
 
@@ -48,6 +70,8 @@ public class ViewAllButtonActivity extends AppCompatActivity {
             }
         });
 
+        loadData();
+
         // By default, show Transactions
         showTransactions();
 
@@ -60,22 +84,94 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         transactions.add(new TransactionModel("5-05-2024", "5020", "Bills", "", "Credit card", "SBI BPCL", "Travel"));
         transactions.add(new TransactionModel("19-05-2024", "200", "Grociries", "", "cash", "", ""));
 
+        /*readAllSubPaymentListFromSheet = ExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "ViewAllButtonActivity class");
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);*/
+
+        //readExpenseDataRowMapListFromExcel = ExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
+        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
+
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , before calculateEachPaymentTypeAmount()");
+        calculateEachPaymentTypeAmount();
+
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () 1 of 7, ==Started==");
         List<PaymentsModel> paymentTypes = new ArrayList<>();
-     /*   AppHomeActivity appHomeActivity = new AppHomeActivity();
-        HashMap<String, Integer> v = appHomeActivity.getEachPaymentTypeAmount();
-        for (String payment : v.keySet()) {
-            paymentTypes.add(new PaymentsModel(payment, v.get(payment).toString()));
-        }*/
-        paymentTypes.add(new PaymentsModel("ICICI", "1000"));
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () 2 of 7, paymentTypes: " + paymentTypes);
+
+        for (String payment : eachPaymentTypeAmount.keySet()) {
+            System.out.println("inside ViewAllButtonActivity class, inside onCreate () 1 of 7, ==payment==" + payment);
+            paymentTypes.add(new PaymentsModel(payment, eachPaymentTypeAmount.get(payment).toString()));
+        }
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () 1 of 7, ==paymentTypes==" + paymentTypes);
+      /*  paymentTypes.add(new PaymentsModel("ICICI", "1000"));
         paymentTypes.add(new PaymentsModel("1Card", "2000"));
         paymentTypes.add(new PaymentsModel("1Card", "4000"));
-        paymentTypes.add(new PaymentsModel("Cash", "5000"));
+        paymentTypes.add(new PaymentsModel("Cash", "5000"));*/
 
         TransactionExpenseAdapter transactionsAdapter = new TransactionExpenseAdapter(this, transactions);
         PaymentTypeExpenseAdapter paymentsAdapter = new PaymentTypeExpenseAdapter(this, paymentTypes);
 
         transactionsList.setAdapter(transactionsAdapter);
         paymentsList.setAdapter(paymentsAdapter);
+    }
+
+    private void loadData() {
+        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
+
+      /*  readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();
+        System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, loadData" + readAllPaymentTypeListFromSheet);*/
+
+        paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+        System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);
+
+        readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
+
+    }
+
+    private void calculateEachPaymentTypeAmount() {
+
+        System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 1 of 7, ==Started==");
+        System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () starting1 eachPaymentTypeAmount: " + eachPaymentTypeAmount);
+        eachPaymentTypeAmount.clear();
+        for (String subPayment : readAllSubPaymentListFromSheet) {
+            System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 2 of 7" + subPayment);
+            for (HashMap<String, String> rowExpenseMap : readExpenseDataRowMapListFromExcel) {
+                System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 3 of 7" + rowExpenseMap);
+                try {
+                    String amountStr = rowExpenseMap.get(AMOUNT);
+                    System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 4 of 7" + amountStr);
+                    if (rowExpenseMap.get(PAYMENT_SUBTYPE).equals(subPayment) && amountStr != null) {
+                        if (eachPaymentTypeAmount.isEmpty() || !eachPaymentTypeAmount.containsKey(subPayment)) {
+                            eachPaymentTypeAmount.put(subPayment, Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 5 of 7 if" + eachPaymentTypeAmount);
+                        } else {
+                            eachPaymentTypeAmount.put(subPayment, eachPaymentTypeAmount.getOrDefault(subPayment, 0) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            //eachPaymentTypeAmount.put(subPayment, eachPaymentTypeAmount.get(subPayment) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 6 of 7 else" + eachPaymentTypeAmount);
+                        }
+                    }
+
+                    // to handle cash payment
+                    if ((rowExpenseMap.get(PAYMENT).equals(CASH)) || (rowExpenseMap.get(PAYMENT).equals(CASH1)) && amountStr != null) {
+
+                        if (eachPaymentTypeAmount.isEmpty() || !eachPaymentTypeAmount.containsKey(CASH) || !eachPaymentTypeAmount.containsKey(CASH1)) {
+                            eachPaymentTypeAmount.put(CASH, Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () --cash payment-- 5 of 7 if" + eachPaymentTypeAmount);
+                        } else {
+                            eachPaymentTypeAmount.put(CASH, eachPaymentTypeAmount.getOrDefault(CASH, 0) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            //eachPaymentTypeAmount.put(CASH, eachPaymentTypeAmount.get(CASH) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                            System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () --cash payment-- 6 of 7 else" + eachPaymentTypeAmount);
+                        }
+                    }
+                } catch (NumberFormatException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 7 of 7 starting1 eachPaymentTypeAmount:, " + eachPaymentTypeAmount);
+        System.out.println("inside ViewAllButtonActivity class, inside calculateEachPaymentTypeAmount () 7 of 7 , ==ended==");
     }
 
     private void showTransactions() {
