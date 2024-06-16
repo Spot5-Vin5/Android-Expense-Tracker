@@ -79,18 +79,21 @@
 
         <!-- TextView for the Subcategory label -->
         <TextView
+            android:id="@+id/subCategoryLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Subcategory"
             android:textSize="18sp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:visibility="gone"/>
 
         <!-- Spinner for Subcategory selection -->
         <Spinner
             android:id="@+id/subCategorySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
 
         <!-- TextView for the Payment Type label -->
         <TextView
@@ -109,18 +112,21 @@
 
         <!-- TextView for the Payment Subtype label -->
         <TextView
+            android:id="@+id/paymentSubtypeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Payment Subtype"
             android:textSize="18sp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:visibility="gone"/>
 
         <!-- Spinner for Payment Subtype selection -->
         <Spinner
             android:id="@+id/paymentSubtypeSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
 
         <!-- TextView for the Note label -->
         <TextView

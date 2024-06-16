@@ -10,7 +10,6 @@ import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBT
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.expensetracker.NewUserActivity;
 
@@ -55,7 +54,7 @@ public class SingleTonExpenseTrackerExcelUtil {
     public static final String excelFilePath = BASE_PATH + fileName;
     // Method to read from an Excel file
 
-    public void readExcelFile(File file) {
+/*    public void readExcelFile(File file) {
         try (FileInputStream fis = new FileInputStream(file)) {
             Workbook workbook = new XSSFWorkbook(fis);
             Sheet sheet = workbook.getSheetAt(0);
@@ -68,57 +67,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
- /*   public ArrayList<String> readTypesFromExcelUtil(String sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
-        System.out.println("inside ExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 1 of 2, ==Started==");
-
-        try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            //    Workbook workbook =NewUserActivity.workbook; // for testing
-            Sheet sheet = workbook.getSheet(sheetName);
-            if (sheet == null) {
-                System.out.println("Sheet not found: " + sheetName);
-            } else {
-                int columnIndex = 0;//catType column
-                for (Row row : sheet) {
-                    Cell cell = row.getCell(columnIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                    if (cell != null && (cell.getCellType() == CellType.STRING || cell.getCellType() != CellType.BLANK)) {
-                        String typeFromSheet = cell.getStringCellValue();
-                        if (!typeFromSheet.contains(sheetName) && !typeFromSheet.contains("Type")) {
-                            typeList.add(typeFromSheet); // Add category to the list
-                            // initialize value with null here and in subcategory class assign the subCatArraylist as value.
-                            readSubTypesFromSheet(row, typeFromSheet, typesToSubtypesMap);
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("inside ExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 2 of 2, === Ended== typeList :" + typeList);
-        return typeList;
-    }
-
-    public void readSubTypesFromSheet(Row row, String typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
-
-        ArrayList<String> subCatList = new ArrayList<String>();
-        int subCatColumnIndex = 1;//Subcat starts at index1
-        Cell subCell;
-        do {
-            subCell = row.getCell(subCatColumnIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            //(cell != null && (cell.getCellType() == CellType.STRING || cell.getCellType() != CellType.BLANK))
-            if (subCell == null || subCell.getCellType() == CellType.BLANK) {
-                break;
-            } else {
-                if (subCell.getCellType() == CellType.STRING) {
-                    subCatList.add(subCell.getStringCellValue());
-                    subCatColumnIndex++;
-                }
-            }
-        } while (subCell.getCellType() != CellType.BLANK);
-        typesToSubtypesMap.put(typeFromSheet, subCatList);
     }*/
-
 
     public  HashMap<ArrayList<String>,HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil(String sheetName){
         HashMap<ArrayList<String>,HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>();
@@ -153,6 +102,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesandSubTypesFromExcelUtil1 () 2 of 2, === Ended== typeList :" + typeList);
         return typesListAndSubTypesMap;
     }
+
     public  ArrayList<String> readTypesFromExcelUtil(String sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 1 of 2, ==Started==");
 

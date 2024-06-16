@@ -14,15 +14,19 @@ import androidx.core.view.WindowInsetsCompat;
 
 
 import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity {
+    private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
 
     private static final String TAG = "ProfileActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+
         Log.i(TAG, "Inside ProfileActivity class: " + "onCreate method()");
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -44,7 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
         String emailFromDB;
 
         ArrayList<String> getScripts = new ArrayList<>();
-        ArrayList<String> scripts = ExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, getScripts);
+
+        ArrayList<String> scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, getScripts);
         if (scripts.get(0).contains("@")) {
             emailFromDB = scripts.get(0);
             nameFromDB = scripts.get(1);

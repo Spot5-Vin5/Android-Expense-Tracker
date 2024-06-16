@@ -3,10 +3,14 @@ package com.example.expensetracker;
 import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
 import static com.example.expensetracker.utilities.HeadingConstants.CASH;
 import static com.example.expensetracker.utilities.HeadingConstants.CASH1;
+import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
+import static com.example.expensetracker.utilities.HeadingConstants.DATE;
 import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
+import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.os.Bundle;
@@ -77,19 +81,23 @@ public class ViewAllButtonActivity extends AppCompatActivity {
 
         // Initialize the transactionlist and paymentslist with sample data
         List<TransactionModel> transactions = new ArrayList<>();
-        transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
+        for(HashMap<String, String> expenseRowMap: readExpenseDataRowMapListFromExcel){
+            System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
+            transactions.add(new TransactionModel(expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
+        }
+
+        /*transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
         transactions.add(new TransactionModel("23-05-2024", "300", "Food", "Dinner", "Credit card", "1Card", "party"));
         transactions.add(new TransactionModel("25-05-2024", "5000", "Fuel", "Petrol", "Credit card", "SBI BPCL", "Travel"));
         transactions.add(new TransactionModel("29-05-2024", "300", "Shopping", "Petrol", "cash", "", "Travel"));
         transactions.add(new TransactionModel("5-05-2024", "5020", "Bills", "", "Credit card", "SBI BPCL", "Travel"));
-        transactions.add(new TransactionModel("19-05-2024", "200", "Grociries", "", "cash", "", ""));
+        transactions.add(new TransactionModel("19-05-2024", "200", "Grociries", "", "cash", "", ""));*/
 
         /*readAllSubPaymentListFromSheet = ExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "ViewAllButtonActivity class");
         System.out.println("inside ViewAllButtonActivity class, inside onCreate () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);*/
 
         //readExpenseDataRowMapListFromExcel = ExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
-        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
-        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
+
 
         System.out.println("inside ViewAllButtonActivity class, inside onCreate () , before calculateEachPaymentTypeAmount()");
         calculateEachPaymentTypeAmount();
@@ -116,6 +124,10 @@ public class ViewAllButtonActivity extends AppCompatActivity {
     }
 
     private void loadData() {
+
+        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
+        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
+
         readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
 

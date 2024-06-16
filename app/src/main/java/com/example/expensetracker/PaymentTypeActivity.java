@@ -17,20 +17,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PaymentTypeActivity extends AppCompatActivity {
-    public static final String sheetName = PAYMENT_TYPE;
+    private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
     private ListView paymentListView;
     private ArrayAdapter<String> paymentAdapter;
-    public static HashMap<String, ArrayList<String>> paymentToSubpaymentMap = new HashMap<>();
-    public static ArrayList<String> readPaymentListfromSheet = ExpenseTrackerExcelUtil.readTypesFromExcelUtil(PAYMENT_TYPE,new ArrayList<String>(), paymentToSubpaymentMap);
+    private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil;
+    private HashMap<String, ArrayList<String>> paymentToPaymentSubTypesMap;
+    private ArrayList<String> readPaymentListFromSheet;/* = ExpenseTrackerExcelUtil.readTypesFromExcelUtil(PAYMENT_TYPE,new ArrayList<String>(), paymentToSubpaymentMap);*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        loadDataFromExcel();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_type);
         paymentListView = findViewById(R.id.paymentList);
@@ -41,8 +45,19 @@ public class PaymentTypeActivity extends AppCompatActivity {
         //  setupAdapter(); // testing place
     }
 
+    private void loadDataFromExcel() {
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel () , readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
+
+        readPaymentListFromSheet = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next();
+        System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel () 3 of 8, readPaymentListFromSheet :" + readPaymentListFromSheet);
+
+        paymentToPaymentSubTypesMap = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.get(readPaymentListFromSheet);// to get value of key present at 0 index in map
+        System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel (), paymentToSubpaymentMap :" + paymentToPaymentSubTypesMap);
+    }
+
     private void setupAdapter() {
-        paymentAdapter = new ArrayAdapter<String>(this, R.layout.activity_list_item_payment_type, readPaymentListfromSheet) {
+        paymentAdapter = new ArrayAdapter<String>(this, R.layout.activity_list_item_payment_type, readPaymentListFromSheet) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -72,11 +87,11 @@ public class PaymentTypeActivity extends AppCompatActivity {
 
             private void confirmDeletion(int position) {
                 new AlertDialog.Builder(PaymentTypeActivity.this).setTitle("Confirm Deletion").setMessage("Do you really want to delete this category?").setPositiveButton("Delete", (dialog, which) -> {
-                    String payment = readPaymentListfromSheet.get(position); //meta AI
-                    readPaymentListfromSheet.remove(position);
+                    String payment = readPaymentListFromSheet.get(position); //meta AI
+                    readPaymentListFromSheet.remove(position);
                     paymentAdapter.notifyDataSetChanged();
                     //  CategoryActivity.categoryToSubcategoriesMap.remove(category); //meta AI
-                    readPaymentListfromSheet.remove(payment); // testing to remove in arraylist
+                    readPaymentListFromSheet.remove(payment); // testing to remove in arraylist
                 }).setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).show();
             }
         };
@@ -91,8 +106,9 @@ public class PaymentTypeActivity extends AppCompatActivity {
         builder.setPositiveButton("Save", (dialog, which) -> {
             EditText editText = customLayout.findViewById(R.id.editPaymentTypeText);
             String payment = editText.getText().toString();
-            if (!payment.isEmpty() && !readPaymentListfromSheet.contains(payment)) {
-                ExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE,payment, readPaymentListfromSheet, paymentToSubpaymentMap);//edit
+            if (!payment.isEmpty() && !readPaymentListFromSheet.contains(payment)) {
+                //  ExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE,payment, readPaymentListfromSheet, paymentToSubpaymentMap);//edit
+                singleTonExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE, payment, readPaymentListFromSheet, paymentToPaymentSubTypesMap);//edit
                 paymentAdapter.notifyDataSetChanged();
                 // setupAdapter(); //testing to refresh adapter even after notifying
             }
@@ -111,7 +127,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
             //   categoryToSubcategoriesMap.put(category, subcategories);
 
             //meta AI
-            readPaymentListfromSheet.add(payment);
+            readPaymentListFromSheet.add(payment);
             paymentAdapter.notifyDataSetChanged();
         }
     }

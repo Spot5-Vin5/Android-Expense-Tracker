@@ -1,6 +1,6 @@
 package com.example.expensetracker;
 
-import static com.example.expensetracker.PaymentTypeActivity.paymentToSubpaymentMap;
+import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
 
 import android.os.Bundle;
@@ -17,33 +17,51 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PaymentSubTypeActivity extends AppCompatActivity {
+    private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
 
     private ListView subpaymentListView;
     private ArrayAdapter<String> subPaymentAdapter;
+    private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil;
     public ArrayList<String> readSubPaymentListfromSheet; // = new ArrayList<String>();
     //public static HashMap<String, ArrayList<String>> readSubCategoryMapfromSheet = ExpenseTrackerExcelUtil.readSubCategoriesfromExcelUtil(categoryToSubcategoriesMap);
     //public static HashMap<String, ArrayList<String>> readSubCategoryMapfromSheet = CategoryActivity.categoryToSubcategoriesMap;
+    private HashMap<String, ArrayList<String>> paymentToPaymentSubTypesMap;
+
     private String paymentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        loadDataFromSheet();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_sub_type);
         subpaymentListView = findViewById(R.id.subpaymentList);
 
         paymentName = getIntent().getStringExtra("payment_name");
-        readSubPaymentListfromSheet = paymentToSubpaymentMap.get(paymentName);
+        readSubPaymentListfromSheet = paymentToPaymentSubTypesMap.get(paymentName);
         assert readSubPaymentListfromSheet != null; // checks if subcategoryList is null
 
         setupAdapter(); // original place
         Button addSubcatButton = findViewById(R.id.addSubpaymentButton);
         addSubcatButton.setOnClickListener(v -> showAddSubcategoryDialog(paymentName));
         //  setupAdapter(); // testing place
+    }
+
+    private void loadDataFromSheet() {
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
+
+        /*readCategoryListFromSheet = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next();
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () 3 of 8, loadData" + readCategoryListFromSheet);*/
+
+        paymentToPaymentSubTypesMap = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.get(readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet (), categoryToSubcategoriesMap :" + paymentToPaymentSubTypesMap);
     }
 
     private void setupAdapter() {
@@ -101,7 +119,8 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
             EditText editText = customLayout.findViewById(R.id.editSubPaymentTypeText);
             String subcategory = editText.getText().toString();
             if (!subcategory.isEmpty() && !readSubPaymentListfromSheet.contains(subcategory)) {
-                ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPE ,paymentName, subcategory, readSubPaymentListfromSheet, paymentToSubpaymentMap);
+               // ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPE ,paymentName, subcategory, readSubPaymentListfromSheet, paymentToSubpaymentMap);
+                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPE ,paymentName, subcategory, readSubPaymentListfromSheet, paymentToPaymentSubTypesMap);
                 subPaymentAdapter.notifyDataSetChanged();
             }
         });

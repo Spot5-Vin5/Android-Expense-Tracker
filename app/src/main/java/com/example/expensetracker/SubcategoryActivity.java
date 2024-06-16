@@ -1,6 +1,5 @@
 package com.example.expensetracker;
 
-import static com.example.expensetracker.CategoryActivity.categoryToSubcategoriesMap;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 
 import android.os.Bundle;
@@ -17,28 +16,33 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SubcategoryActivity extends AppCompatActivity {
+    private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
 
     private ListView subcategoryListView;
     private ArrayAdapter<String> subcategoryAdapter;
-    public ArrayList<String> readSubCategoryListfromSheet;
-    //public static HashMap<String, ArrayList<String>> readSubCategoryMapfromSheet = ExpenseTrackerExcelUtil.readSubCategoriesfromExcelUtil(categoryToSubcategoriesMap);
-    //public static HashMap<String, ArrayList<String>> readSubCategoryMapfromSheet = CategoryActivity.categoryToSubcategoriesMap;
+    private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil;
+    public ArrayList<String> readSubCategoryListFromSheet;
+    private HashMap<String, ArrayList<String>> categoryToCategoriesSubTypesMap;
+
     private String categoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        loadDataFromSheet();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subcategory);
         subcategoryListView = findViewById(R.id.subcategoryList);
 
         categoryName = getIntent().getStringExtra("category_name");
-        readSubCategoryListfromSheet = categoryToSubcategoriesMap.get(categoryName);
-        assert readSubCategoryListfromSheet != null; // checks if subcategoryList is null
+        readSubCategoryListFromSheet = categoryToCategoriesSubTypesMap.get(categoryName);
+        assert readSubCategoryListFromSheet != null; // checks if subcategoryList is null
 
         setupAdapter(); // original place
         Button addSubcatButton = findViewById(R.id.addSubcategoryButton);
@@ -46,8 +50,20 @@ public class SubcategoryActivity extends AppCompatActivity {
         //  setupAdapter(); // testing place
     }
 
+    private void loadDataFromSheet() {
+        readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES);
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil);
+
+       /* readCategoryListFromSheet = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next();
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () 3 of 8, loadData" + readCategoryListFromSheet);*/
+
+        categoryToCategoriesSubTypesMap = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.get(readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+        System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet (), categoryToSubcategoriesMap :" + categoryToCategoriesSubTypesMap);
+
+    }
+
     private void setupAdapter() {
-        subcategoryAdapter = new ArrayAdapter<String>(this, R.layout.activity_list_item_sub_category, readSubCategoryListfromSheet) {
+        subcategoryAdapter = new ArrayAdapter<String>(this, R.layout.activity_list_item_sub_category, readSubCategoryListFromSheet) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -72,10 +88,10 @@ public class SubcategoryActivity extends AppCompatActivity {
 
             private void confirmDeletion(int position) {
                 new AlertDialog.Builder(SubcategoryActivity.this).setTitle("Confirm Deletion").setMessage("Do you really want to delete this sub category?").setPositiveButton("Delete", (dialog, which) -> {
-                    String subCategory = readSubCategoryListfromSheet.get(position); //meta AI
-                    readSubCategoryListfromSheet.remove(position);
+                    String subCategory = readSubCategoryListFromSheet.get(position); //meta AI
+                    readSubCategoryListFromSheet.remove(position);
                     subcategoryAdapter.notifyDataSetChanged();
-                    readSubCategoryListfromSheet.remove(subCategory); // testing to remove in arraylist
+                    readSubCategoryListFromSheet.remove(subCategory); // testing to remove in arraylist
                 }).setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).show();
             }
         /*    private void confirmDeletion(int position) {
@@ -99,8 +115,9 @@ public class SubcategoryActivity extends AppCompatActivity {
         builder.setPositiveButton("Save", (dialog, which) -> {
             EditText editText = customLayout.findViewById(R.id.editSubCategoryText);
             String subcategory = editText.getText().toString();
-            if (!subcategory.isEmpty() && !readSubCategoryListfromSheet.contains(subcategory)) {
-                ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES ,categoryName, subcategory, readSubCategoryListfromSheet, categoryToSubcategoriesMap);
+            if (!subcategory.isEmpty() && !readSubCategoryListFromSheet.contains(subcategory)) {
+                //  ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES ,categoryName, subcategory, readSubCategoryListFromSheet, categoryToSubcategoriesMap);
+                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES, categoryName, subcategory, readSubCategoryListFromSheet, categoryToCategoriesSubTypesMap);
                 subcategoryAdapter.notifyDataSetChanged();
             }
         });
