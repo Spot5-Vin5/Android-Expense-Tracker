@@ -83,20 +83,29 @@
             android:visibility="gone"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvNote"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Note: Party"
-        android:textColor="@color/black"
-        android:padding="4dp"
-        android:visibility="gone"/>
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <ImageButton
-        android:id="@+id/btnMoreOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_more_vert"
-        android:background="?attr/selectableItemBackground"
-        android:contentDescription="More options" />
+        <ImageButton
+            android:id="@+id/btnMoreOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_vert"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="More options" />
+
+        <TextView
+            android:id="@+id/tvNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note: Party"
+            android:textColor="@color/black"
+            android:padding="4dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
 </LinearLayout>

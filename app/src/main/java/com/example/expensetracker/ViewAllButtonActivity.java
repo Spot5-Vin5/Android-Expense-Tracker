@@ -22,10 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
-import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.PaymentTypeExpenseAdapter;
+import com.example.expensetracker.adapters.PaymentTypeExpenseAdapter;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.TransactionExpenseAdapter;
+import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

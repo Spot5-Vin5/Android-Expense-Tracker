@@ -1,4 +1,4 @@
-package com.example.expensetracker.utilities;
+package com.example.expensetracker.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
