@@ -14,17 +14,23 @@ import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.expensetracker.adapters.PaymentTypeExpenseAdapter;
+import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
-import com.example.expensetracker.adapters.PaymentTypeExpenseAdapter;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +78,6 @@ public class ViewAllButtonActivity extends AppCompatActivity {
                 showPayments();
             }
         });
-
         loadData();
 
         // By default, show Transactions
@@ -120,6 +125,20 @@ public class ViewAllButtonActivity extends AppCompatActivity {
 
         transactionsList.setAdapter(transactionsAdapter);
         paymentsList.setAdapter(paymentsAdapter);
+        transactionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Assuming your adapter provides access to the ImageButton within each item view
+                ImageButton btnMoreOptions = view.findViewById(R.id.btnMoreOptions);
+                btnMoreOptions.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Call method to show popup menu
+                        showPopupMenu(v);
+                    }
+                });
+            }
+        });
     }
 
     private void loadData() {
@@ -197,5 +216,37 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentsList.setVisibility(View.VISIBLE);
         btnTransactions.setBackgroundResource(R.drawable.button_selector_payments); // Unselected state
         btnPayments.setBackgroundResource(R.drawable.button_selector_transactions); // Selected state
+    }
+    private void showPopupMenu(View view) {
+        System.out.println("inside ExpenseTransactionImageButtonActivity class, Image button is clicked -> inside showPopupMenu () ");
+        // Create a PopupMenu
+        PopupMenu popup = new PopupMenu(this, view);
+        // Inflate the menu from XML
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.popup_menu, popup.getMenu());
+        // Set a click listener for menu item clicks
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.editExpense) {
+                    Toast.makeText(ViewAllButtonActivity.this, "Edit Expense selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (itemId == R.id.deleteExpense) {
+                    Toast.makeText(ViewAllButtonActivity.this, "Delete Expense selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (itemId == R.id.option3) {
+                    Toast.makeText(ViewAllButtonActivity.this, "Option 3 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (itemId == R.id.option4) {
+                    Toast.makeText(ViewAllButtonActivity.this, "Option 4 selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            }
+        });
+        // Show the popup menu
+        popup.show();
+        System.out.println("inside ExpenseTransactionImageButtonActivity class, Image button is clicked -> inside showPopupMenu () --ended--");
     }
 }
