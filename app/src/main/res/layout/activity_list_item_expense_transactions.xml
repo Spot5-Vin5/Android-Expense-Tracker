@@ -109,7 +109,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_more_vert"
             android:background="?attr/selectableItemBackground"
-            android:contentDescription="More options" />
+            android:contentDescription="More options"
+            android:clickable="true" />
 
     </LinearLayout>
 
