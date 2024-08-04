@@ -112,12 +112,6 @@ public class TransactionExpenseAdapter extends BaseAdapter {
                 } else if (itemId == R.id.deleteExpense) {
                     Toast.makeText(context, "Delete Expense selected", Toast.LENGTH_SHORT).show();
                     return true;
-                } else if (itemId == R.id.option3) {
-                    Toast.makeText(context, "Option 3 selected", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (itemId == R.id.option4) {
-                    Toast.makeText(context, "Option 4 selected", Toast.LENGTH_SHORT).show();
-                    return true;
                 }
                 return false;
             }
