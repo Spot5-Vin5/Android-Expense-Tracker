@@ -11,6 +11,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
+import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONID;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.os.Bundle;
@@ -81,7 +82,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         List<TransactionModel> transactions = new ArrayList<>();
         for(HashMap<String, String> expenseRowMap: readExpenseDataRowMapListFromExcel){
             System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
-            transactions.add(new TransactionModel(expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
+            transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID),expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
         }
 
         /*transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));

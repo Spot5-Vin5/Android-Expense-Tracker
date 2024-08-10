@@ -17,12 +17,13 @@ public class HeadingConstants {
     public static final String TYPE = "Type";
     public static final String SUBTYPES = "SubTypes";
     public static final String LIMIT = "Limit";
+    public static final String TRANSACTIONID = "TransactionID";
     public static final String DATE = "Date";
     public static final String AMOUNT = "Amount";
     public static final String CATEGORY = "Category";
     public static final String SUBCATEGORY = "SubCategory";
     public static final String PAYMENT = "PaymentType";
-    public static final String PAYMENT_SUBTYPE ="PaymentSubtype";
+    public static final String PAYMENT_SUBTYPE = "PaymentSubtype";
     public static final String NOTE = "Note";
 
     public static final String CASH = "Cash";
@@ -31,14 +32,16 @@ public class HeadingConstants {
 
 
     public static final HashMap<String, Integer> expenseColumnIndices = new HashMap<String, Integer>();
+
     static {
-        expenseColumnIndices.put(DATE, 0);
-        expenseColumnIndices.put(AMOUNT, 1);
-        expenseColumnIndices.put(CATEGORY, 2);
-        expenseColumnIndices.put(SUBCATEGORY, 3);
-        expenseColumnIndices.put(PAYMENT, 4);
-        expenseColumnIndices.put(PAYMENT_SUBTYPE, 5);
-        expenseColumnIndices.put(NOTE, 6);
+        expenseColumnIndices.put(TRANSACTIONID,0);
+        expenseColumnIndices.put(DATE, 1);
+        expenseColumnIndices.put(AMOUNT, 2);
+        expenseColumnIndices.put(CATEGORY, 3);
+        expenseColumnIndices.put(SUBCATEGORY, 4);
+        expenseColumnIndices.put(PAYMENT, 5);
+        expenseColumnIndices.put(PAYMENT_SUBTYPE, 6);
+        expenseColumnIndices.put(NOTE, 7);
     }
 
     //->correct path   //"/storage/emulated/0/Android/data/com.example.expensetracker/files/Expense Tracker App/";

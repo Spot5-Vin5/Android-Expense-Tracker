@@ -2,6 +2,7 @@ package com.example.expensetracker.models;
 
 
 public class TransactionModel {
+    private String transactionId;
     private String date;
     private String amount;
     private String categoryType;
@@ -10,7 +11,8 @@ public class TransactionModel {
     private String paymentSubType;
     private String note;
 
-    public TransactionModel(String date, String amount, String categoryType, String categorySubType, String paymentType, String paymentSubType, String note) {
+    public TransactionModel(String transactionId, String date, String amount, String categoryType, String categorySubType, String paymentType, String paymentSubType, String note) {
+        this.transactionId = transactionId;
         this.date = date;
         this.amount = amount;
         this.categoryType = categoryType;
@@ -18,6 +20,14 @@ public class TransactionModel {
         this.paymentType = paymentType;
         this.paymentSubType = paymentSubType;
         this.note = note;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public String getDate() {

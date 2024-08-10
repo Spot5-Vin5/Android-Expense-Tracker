@@ -16,6 +16,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE
 import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBTYPES;
+import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONID;
 import static com.example.expensetracker.utilities.HeadingConstants.TYPE;
 
 import android.content.Context;
@@ -35,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 public class NewUserActivity extends AppCompatActivity {
 
@@ -137,30 +139,42 @@ public class NewUserActivity extends AppCompatActivity {
 
             XSSFSheet expense = workbook.createSheet(EXPENSE);
             expense.createRow(0).createCell(0).setCellValue(EXPENSE);
-            expense.createRow(1).createCell(0).setCellValue(DATE);
-            expense.getRow(1).createCell(1).setCellValue(AMOUNT);
-            expense.getRow(1).createCell(2).setCellValue(CATEGORY);
-            expense.getRow(1).createCell(3).setCellValue(SUBCATEGORY);
-            expense.getRow(1).createCell(4).setCellValue(PAYMENT);
-            expense.getRow(1).createCell(5).setCellValue(PAYMENT_SUBTYPE);
-            expense.getRow(1).createCell(6).setCellValue(NOTE);
+            expense.createRow(1).createCell(0).setCellValue(TRANSACTIONID);
+            expense.getRow(1).createCell(1).setCellValue(DATE);
+            expense.getRow(1).createCell(2).setCellValue(AMOUNT);
+            expense.getRow(1).createCell(3).setCellValue(CATEGORY);
+            expense.getRow(1).createCell(4).setCellValue(SUBCATEGORY);
+            expense.getRow(1).createCell(5).setCellValue(PAYMENT);
+            expense.getRow(1).createCell(6).setCellValue(PAYMENT_SUBTYPE);
+            expense.getRow(1).createCell(7).setCellValue(NOTE);
 
             //sample data insert
-            expense.createRow(2).createCell(0).setCellValue("23-04-2024");
-            expense.getRow(2).createCell(1).setCellValue("100");
-            expense.getRow(2).createCell(2).setCellValue("Food");
-            expense.getRow(2).createCell(3).setCellValue("Dinner");
-            expense.getRow(2).createCell(4).setCellValue("Credit Card");
-            expense.getRow(2).createCell(5).setCellValue("BOB one");
-            expense.getRow(2).createCell(6).setCellValue("Party");
+            expense.createRow(2).createCell(0).setCellValue(UUID.randomUUID().toString());
+            expense.getRow(2).createCell(1).setCellValue("23-04-2024");
+            expense.getRow(2).createCell(2).setCellValue("100");
+            expense.getRow(2).createCell(3).setCellValue("Food");
+            expense.getRow(2).createCell(4).setCellValue("Dinner");
+            expense.getRow(2).createCell(5).setCellValue("Credit Card");
+            expense.getRow(2).createCell(6).setCellValue("BOB one");
+            expense.getRow(2).createCell(7).setCellValue("Party");
 
-            expense.createRow(3).createCell(0).setCellValue("21-04-2024");
-            expense.getRow(3).createCell(1).setCellValue("500");
-            expense.getRow(3).createCell(2).setCellValue("Fuel");
-            expense.getRow(3).createCell(3).setCellValue("Petrol");
-            expense.getRow(3).createCell(4).setCellValue("Credit Card");
-            expense.getRow(3).createCell(5).setCellValue("SBI BPCL");
-            expense.getRow(3).createCell(6).setCellValue("Goa");
+            expense.createRow(3).createCell(0).setCellValue(UUID.randomUUID().toString());
+            expense.getRow(3).createCell(1).setCellValue("21-04-2024");
+            expense.getRow(3).createCell(2).setCellValue("500");
+            expense.getRow(3).createCell(3).setCellValue("Fuel");
+            expense.getRow(3).createCell(4).setCellValue("Petrol");
+            expense.getRow(3).createCell(5).setCellValue("Credit Card");
+            expense.getRow(3).createCell(6).setCellValue("SBI BPCL");
+            expense.getRow(3).createCell(7).setCellValue("Goa");
+
+            expense.createRow(4).createCell(0).setCellValue(UUID.randomUUID().toString());
+            expense.getRow(4).createCell(1).setCellValue("01-05-2024");
+            expense.getRow(4).createCell(2).setCellValue("5000");
+            expense.getRow(4).createCell(3).setCellValue("Fuel");
+            expense.getRow(4).createCell(4).setCellValue("Petrol");
+            expense.getRow(4).createCell(5).setCellValue("Credit Card");
+            expense.getRow(4).createCell(6).setCellValue("SBI BPCL");
+            expense.getRow(4).createCell(7).setCellValue("Goa");
 
            /* expense.createRow(4).createCell(0).setCellValue("28-04-2024");
             expense.getRow(4).createCell(1).setCellValue("1000");
@@ -185,7 +199,6 @@ public class NewUserActivity extends AppCompatActivity {
             expense.getRow(6).createCell(4).setCellValue("Cash");
             //expense.getRow(6).createCell(5).setCellValue("");
             //expense.getRow(6).createCell(6).setCellValue("");*/
-
 
             XSSFSheet profileSheet = workbook.createSheet(PROFILE_ACTIVITY);
             profileSheet.createRow(0).createCell(0).setCellValue(PROFILE_ACTIVITY);

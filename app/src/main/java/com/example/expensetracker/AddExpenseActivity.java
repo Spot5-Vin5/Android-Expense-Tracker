@@ -11,6 +11,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
+import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONID;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.content.Intent;
@@ -36,6 +37,7 @@ import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class AddExpenseActivity extends AppCompatActivity {
@@ -224,6 +226,8 @@ public class AddExpenseActivity extends AppCompatActivity {
                 } */ else {
                     // All mandatory fields are filled, proceed with form submission
                     // Submit the form
+
+                    addExpenseDataMap.put(TRANSACTIONID, UUID.randomUUID().toString());
                     addExpenseDataMap.put(AMOUNT, amount);
                     addExpenseDataMap.put(DATE, date);
                     addExpenseDataMap.put(CATEGORY, category);

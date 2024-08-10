@@ -8,6 +8,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
+import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONID;
 
 import android.content.Context;
 
@@ -260,13 +261,14 @@ public class SingleTonExpenseTrackerExcelUtil {
             Sheet sheet = workbook.getSheet(sheetName);
 
             int highestRowIndex = sheet.getPhysicalNumberOfRows(); // to get how many rows have data in sheet.
-            sheet.createRow(highestRowIndex).createCell(0).setCellValue(addExpenseDataMap.get(DATE)); // to add new category in the new row.
-            sheet.getRow(highestRowIndex).createCell(1).setCellValue(addExpenseDataMap.get(AMOUNT));
-            sheet.getRow(highestRowIndex).createCell(2).setCellValue(addExpenseDataMap.get(CATEGORY));
-            sheet.getRow(highestRowIndex).createCell(3).setCellValue(addExpenseDataMap.get(SUBCATEGORY));
-            sheet.getRow(highestRowIndex).createCell(4).setCellValue(addExpenseDataMap.get(PAYMENT));
-            sheet.getRow(highestRowIndex).createCell(5).setCellValue(addExpenseDataMap.get(PAYMENT_SUBTYPE));
-            sheet.getRow(highestRowIndex).createCell(6).setCellValue(addExpenseDataMap.get(NOTE));
+            sheet.createRow(highestRowIndex).createCell(0).setCellValue(addExpenseDataMap.get(TRANSACTIONID));
+            sheet.getRow(highestRowIndex).createCell(1).setCellValue(addExpenseDataMap.get(DATE)); // to add new category in the new row.
+            sheet.getRow(highestRowIndex).createCell(2).setCellValue(addExpenseDataMap.get(AMOUNT));
+            sheet.getRow(highestRowIndex).createCell(3).setCellValue(addExpenseDataMap.get(CATEGORY));
+            sheet.getRow(highestRowIndex).createCell(4).setCellValue(addExpenseDataMap.get(SUBCATEGORY));
+            sheet.getRow(highestRowIndex).createCell(5).setCellValue(addExpenseDataMap.get(PAYMENT));
+            sheet.getRow(highestRowIndex).createCell(6).setCellValue(addExpenseDataMap.get(PAYMENT_SUBTYPE));
+            sheet.getRow(highestRowIndex).createCell(7).setCellValue(addExpenseDataMap.get(NOTE));
 
             //  typeList.add(type);
             try (FileOutputStream fileOut = new FileOutputStream(new File(excelFilePath))) {
@@ -297,6 +299,7 @@ public class SingleTonExpenseTrackerExcelUtil {
                 //int columnIndex = 0;//catType column
                 for (Row row : sheet) {
                     System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , --else block--" + row);
+                    Cell transactionIdCell = row.getCell(expenseColumnIndices.get(TRANSACTIONID), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     Cell dateCell = row.getCell(expenseColumnIndices.get(DATE), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     Cell amountCell = row.getCell(expenseColumnIndices.get(AMOUNT), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     Cell categoryCell = row.getCell(expenseColumnIndices.get(CATEGORY), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
@@ -307,18 +310,20 @@ public class SingleTonExpenseTrackerExcelUtil {
 
                     System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , --else block-- inside for loop: " + dateCell + "," + amountCell + "," + categoryCell + "," + subcategoryCell + "," + paymentCell + "," + paymentSubtypeCell + "," + noteCell);
 
-                    if ((dateCell != null && (dateCell.getCellType() == CellType.STRING || dateCell.getCellType() != CellType.BLANK))
+                    if ((transactionIdCell != null && (transactionIdCell.getCellType() == CellType.STRING || transactionIdCell.getCellType() != CellType.BLANK))
+                            &&(dateCell != null && (dateCell.getCellType() == CellType.STRING || dateCell.getCellType() != CellType.BLANK))
                             && (categoryCell != null && (categoryCell.getCellType() == CellType.STRING || categoryCell.getCellType() != CellType.BLANK))
                             && (paymentCell != null && (paymentCell.getCellType() == CellType.STRING || paymentCell.getCellType() != CellType.BLANK))
                     ) {
                         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , --else block-- inside for loop **1st if block");
                         String rowDate = dateCell.getStringCellValue();// to skip 1st 2 rows which are not required
-                        if (!rowDate.contains(sheetName) && !rowDate.contains(DATE) && !rowDate.contains(AMOUNT) && !rowDate.contains(CATEGORY)
+                        if (!rowDate.contains(sheetName) &&!rowDate.contains(TRANSACTIONID) && !rowDate.contains(DATE) && !rowDate.contains(AMOUNT) && !rowDate.contains(CATEGORY)
                                 && !rowDate.contains(SUBCATEGORY) && !rowDate.contains(PAYMENT) && !rowDate.contains(PAYMENT_SUBTYPE) && !rowDate.contains(NOTE)) {
                             System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , --else block-- inside for loop **2nd if block");
 
                             HashMap<String, String> rowExpenseDataMap = new HashMap<String, String>(); // new map for each row
 
+                            rowExpenseDataMap.put(TRANSACTIONID, transactionIdCell.getStringCellValue());
                             rowExpenseDataMap.put(DATE, dateCell.getStringCellValue());
                             rowExpenseDataMap.put(CATEGORY, categoryCell.getStringCellValue());
                             rowExpenseDataMap.put(PAYMENT, paymentCell.getStringCellValue());
