@@ -22,5 +22,9 @@ _Feature: ViewAllButton_
 _Feature: ExistingUser_
 ```
  1. Login existing user, feature development.
-
+ 2. Save the New User email as file name, store password in side the profile page.
+ 3. Steps to validate the existing user
+    a. User should enter email, this should validate all the file names in the folder.
+    b. Once file name is matched, ask for password, now validate and do login.   
+    c. Load Home page.
 ```
