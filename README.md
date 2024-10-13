@@ -18,3 +18,9 @@ _Feature: ViewAllButton_
     a. Payment Type
     b. Total Amount 
 ```
+
+_Feature: ExistingUser_
+```
+ 1. Login existing user, feature development.
+
+```
