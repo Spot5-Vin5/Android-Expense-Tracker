@@ -1,7 +1,9 @@
 package com.example.expensetracker.models;
 
 
-public class TransactionModel {
+import java.io.Serializable;
+
+public class TransactionModel implements Serializable {
     private String transactionId;
     private String date;
     private String amount;

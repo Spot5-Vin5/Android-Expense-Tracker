@@ -1,6 +1,7 @@
 package com.example.expensetracker.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.expensetracker.AddExpenseActivity;
 import com.example.expensetracker.R;
 import com.example.expensetracker.models.TransactionModel;
 
@@ -87,14 +89,14 @@ public class TransactionExpenseAdapter extends BaseAdapter {
         moreOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopupMenu(moreOptions);
+                showPopupMenu(moreOptions,transaction);
             }
         });
 
         return convertView;
     }
 
-    private void showPopupMenu(ImageButton btnMoreOptions) {
+    private void showPopupMenu(ImageButton btnMoreOptions, TransactionModel transaction) {
         System.out.println("inside TransactionExpenseAdapter class, Image button is clicked -> inside showPopupMenu () ");
         // Create a PopupMenu
         PopupMenu popup = new PopupMenu(context, btnMoreOptions);
@@ -107,6 +109,9 @@ public class TransactionExpenseAdapter extends BaseAdapter {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.editExpense) {
+                    Intent intent = new Intent(context, AddExpenseActivity.class);
+                    intent.putExtra("transaction", transaction);
+                    context.startActivity(intent);
                     Toast.makeText(context, "Edit Expense selected", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if (itemId == R.id.deleteExpense) {

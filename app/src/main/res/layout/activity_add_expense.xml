@@ -64,6 +64,7 @@
 
         <!-- TextView for the CategoryActivity label -->
         <TextView
+            android:id="@+id/CategoryLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Category"
@@ -97,6 +98,7 @@
 
         <!-- TextView for the Payment Type label -->
         <TextView
+            android:id="@+id/paymentTypeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Payment Type"

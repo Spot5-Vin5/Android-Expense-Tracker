@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class AppHomeActivity extends AppCompatActivity {
     private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
-    private Button appHomeMenu, addExpense, profile, viewAll;
+    private Button appHomeMenuButton, addExpenseButton, profileButton, viewAllButton;
     //private TextView balanceInfoText;
     private PieChart pieChart;
     private HashMap<String, ArrayList<String>> categoryToSubcategoriesMap = new HashMap<>();
@@ -46,7 +46,7 @@ public class AppHomeActivity extends AppCompatActivity {
 
     private HashMap<String, ArrayList<String>> paymentToSubPaymentMap = new HashMap<>();
 
-    HashMap<ArrayList<String>,HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
+    HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
     private ArrayList<String> readAllPaymentTypeListFromSheet; //= new ArrayList<>();
     private ArrayList<String> readAllSubPaymentListFromSheet; //= new ArrayList<>();
     private ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel;// = new ArrayList<>();
@@ -99,26 +99,26 @@ public class AppHomeActivity extends AppCompatActivity {
 
     private void initializeUI() {
         System.out.println("inside AppHomeActivity class, inside initializeUI () 1 of 3");
-        profile = findViewById(R.id.profile);
-        addExpense = findViewById(R.id.addExpense);
-        appHomeMenu = findViewById(R.id.appHomeMenu);
+        profileButton = findViewById(R.id.profile);
+        addExpenseButton = findViewById(R.id.addExpense);
+        appHomeMenuButton = findViewById(R.id.appHomeMenu);
         pieChart = findViewById(R.id.pie_chart_container);
-        viewAll = findViewById(R.id.view_all_button);
+        viewAllButton = findViewById(R.id.view_all_button);
 
         System.out.println("inside AppHomeActivity class, inside initializeUI () 2 of 3");
-        if (profile != null) {
-            profile.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ProfileActivity.class)));
+        if (profileButton != null) {
+            profileButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ProfileActivity.class)));
         }
 
-        if (addExpense != null) {
-            addExpense.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, AddExpenseActivity.class)));
+        if (addExpenseButton != null) {
+            addExpenseButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, AddExpenseActivity.class)));
         }
 
-        if (appHomeMenu != null) {
-            appHomeMenu.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, HomeMenuActivity.class)));
+        if (appHomeMenuButton != null) {
+            appHomeMenuButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, HomeMenuActivity.class)));
         }
-        if (viewAll != null) {
-            viewAll.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ViewAllButtonActivity.class)));
+        if (viewAllButton != null) {
+            viewAllButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ViewAllButtonActivity.class)));
         }
         System.out.println("inside AppHomeActivity class, inside initializeUI () 3 of 3");
     }
@@ -141,9 +141,9 @@ public class AppHomeActivity extends AppCompatActivity {
 
       /*  readAllPaymentTypeListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(PAYMENT_TYPE, new ArrayList<String>(), paymentToSubPaymentMap);
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, readAllPaymentListFromSheet" + readAllPaymentTypeListFromSheet);  */
-      //  readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
-       // readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
-       // System.out.println("inside AppHomeActivity class, inside loadData () 4 of 8, readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
+        //  readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+        // readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+        // System.out.println("inside AppHomeActivity class, inside loadData () 4 of 8, readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
         readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
         System.out.println("inside AppHomeActivity class, inside loadData () 5 of 8, readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
