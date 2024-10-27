@@ -23,7 +23,7 @@
         android:layout_marginTop="190dp"/>
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextSigninEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
@@ -32,10 +32,10 @@
         android:layout_marginTop="20dp"/>
 
     <Button
-        android:id="@+id/buttonLogin"
+        android:id="@+id/buttonSigninNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Next"
-        android:layout_below="@id/editTextEmail"
+        android:layout_below="@id/editTextSigninEmail"
         android:layout_marginTop="20dp"/>
 </RelativeLayout>

@@ -10,6 +10,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
 import static com.example.expensetracker.utilities.HeadingConstants.LIMIT;
 import static com.example.expensetracker.utilities.HeadingConstants.NAME;
 import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
+import static com.example.expensetracker.utilities.HeadingConstants.PASSWORD;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
@@ -39,18 +40,11 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class NewUserActivity extends AppCompatActivity {
-
-
-    //private Button buttonExistingUser, buttonNewUser;
-    public static String basePath;
-    public String filePath;
-
-    private EditText editTextName, editTextEmail, editTextPassword, editTextConfirmPassword;
-
-    public static String fileName;
+    public static String basePath, fileName, filePath;
+    public static String email;
+    private EditText editTextSignupName, editTextSignupEmail, editTextSignupPassword, editTextSignupConfirmPassword;
+    private Button buttonAccountCreate;
     private Context context = this;
-
-    //public static XSSFWorkbook workbook = new XSSFWorkbook(); // only for testing
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,42 +52,21 @@ public class NewUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
-        editTextName = findViewById(R.id.editTextName);
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassword = findViewById(R.id.editTextNewPassword);
-        editTextConfirmPassword = findViewById(R.id.editTextNewPassword2);
-        Button buttonCreate = findViewById(R.id.buttonCreateFile);
+        editTextSignupName = findViewById(R.id.editTextSignupName);
+        editTextSignupEmail = findViewById(R.id.editTextSignupEmail);
+        editTextSignupPassword = findViewById(R.id.editTextSignupPassword);
+        editTextSignupConfirmPassword = findViewById(R.id.editTextSignupConfirmPassword);
+        buttonAccountCreate = findViewById(R.id.buttonAccountCreate);
 
         System.out.println("inside NewUserActivity class, inside onCreate(), before buttonCreate button clicked");
-        buttonCreate.setOnClickListener(new View.OnClickListener() {
+        buttonAccountCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createExcelFile();
                 startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
-
-               /* if (checkPermission()) {
-
-                    createExcelFile();
-                    // Intent to navigate to New User Activity
-                    startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
-
-                } else {
-                    requestStoragePermission();
-                }*/
             }
         });
     }
-
-    // unblock for android app
-/*    private boolean checkPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-    }*/
-
-    // unblock for android app
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -108,27 +81,26 @@ public class NewUserActivity extends AppCompatActivity {
 
     private void createExcelFile() {
         System.out.println("inside NewUserActivity class, inside createExcelFile(), after buttonCreate button clicked: ===started=== ");
-        String email = editTextEmail.getText().toString();
+        email = editTextSignupEmail.getText().toString();
         if (!email.contains("@gmail.com")) {
             Toast.makeText(this, "Enter valid gmail id", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String password = editTextPassword.getText().toString();
-        String confirmPassword = editTextConfirmPassword.getText().toString();
+        String password = editTextSignupPassword.getText().toString();
+        String confirmPassword = editTextSignupConfirmPassword.getText().toString();
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String[] s = email.split("@", 2);
+       /* String[] s = email.split("@", 2);
         String s1 = s[0];
-        fileName = s1 + "_expenses.xlsx";
+        fileName = s1 + "_expenses.xlsx";*/
+        fileName = email+ "_expensesFile.xlsx"; // check this if it works
         basePath = getExternalFilesDir(null).getAbsolutePath(); // App-specific external directory
         filePath = basePath + "/Expense Tracker App/" + fileName;
 
-
-        //String filePath = BASE_PATH + fileName; // for testing in windows.
         File file = new File(filePath);
 
         if (!file.getParentFile().exists()) {
@@ -203,9 +175,11 @@ public class NewUserActivity extends AppCompatActivity {
             XSSFSheet profileSheet = workbook.createSheet(PROFILE_ACTIVITY);
             profileSheet.createRow(0).createCell(0).setCellValue(PROFILE_ACTIVITY);
             profileSheet.createRow(1).createCell(0).setCellValue(NAME);
-            profileSheet.getRow(1).createCell(1).setCellValue(editTextName.getText().toString());
+            profileSheet.getRow(1).createCell(1).setCellValue(editTextSignupName.getText().toString());
             profileSheet.createRow(2).createCell(0).setCellValue(EMAIL);
-            profileSheet.getRow(2).createCell(1).setCellValue(editTextEmail.getText().toString());
+            profileSheet.getRow(2).createCell(1).setCellValue(editTextSignupEmail.getText().toString());
+            profileSheet.createRow(3).createCell(0).setCellValue(PASSWORD);
+            profileSheet.getRow(3).createCell(1).setCellValue(editTextSignupPassword.getText().toString());
 
             XSSFSheet categoriesSheet = workbook.createSheet(CATEGORIES);
             categoriesSheet.createRow(0).createCell(0).setCellValue(CATEGORIES);

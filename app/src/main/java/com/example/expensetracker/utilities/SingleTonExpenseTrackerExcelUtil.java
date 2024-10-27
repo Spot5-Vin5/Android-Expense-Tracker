@@ -12,7 +12,9 @@ import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONI
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.content.Context;
+import android.text.TextUtils;
 
+import com.example.expensetracker.ExistingUserActivity;
 import com.example.expensetracker.NewUserActivity;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,7 +54,24 @@ public class SingleTonExpenseTrackerExcelUtil {
         return instance;
     }
 
-    public static String fileName = NewUserActivity.fileName;
+    public static String fileName;
+    static {
+        //static block
+        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside SingleTonExpenseTrackerExcelUtil () , ==Started==");
+
+        String newUserEmail = NewUserActivity.email;
+        String existingUserEmail = ExistingUserActivity.email;
+
+        if (!TextUtils.isEmpty(newUserEmail) && android.util.Patterns.EMAIL_ADDRESS.matcher(newUserEmail).matches()) {
+            fileName = NewUserActivity.fileName;
+        } else if (!TextUtils.isEmpty(existingUserEmail) && android.util.Patterns.EMAIL_ADDRESS.matcher(existingUserEmail).matches()) {
+            {
+                fileName = ExistingUserActivity.fileName;
+            }
+            System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside SingleTonExpenseTrackerExcelUtil () , ==Ended==");
+        }
+    }
+
     public static final String excelFilePath = BASE_PATH + fileName;
     // Method to read from an Excel file
 
@@ -71,7 +90,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
     }*/
 
-    public HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil(String sheetName) {
+    public HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil
+            (String sheetName) {
         HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>();
         ArrayList<String> typeList = new ArrayList<>();
         HashMap<String, ArrayList<String>> typesToSubtypesMap = new HashMap<>();
@@ -105,7 +125,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return typesListAndSubTypesMap;
     }
 
-    public ArrayList<String> readTypesFromExcelUtil(String sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public ArrayList<String> readTypesFromExcelUtil(String
+                                                            sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 1 of 2, ==Started==");
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -134,7 +155,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return typeList;
     }
 
-    public void readSubTypesFromSheet(Row row, String typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public void readSubTypesFromSheet(Row row, String
+            typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
 
         ArrayList<String> subCatList = new ArrayList<String>();
         int subCatColumnIndex = 1;//Subcat starts at index1
@@ -154,7 +176,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         typesToSubtypesMap.put(typeFromSheet, subCatList);
     }
 
-    public void writeTypesToExcelUtil(String sheetName, String type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public void writeTypesToExcelUtil(String sheetName, String
+            type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
@@ -178,7 +201,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
     }
 
-    public void writeSubTypesToExcelUtil(String sheetName, String typeName, String subType, ArrayList<String> readSubTypesListFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public void writeSubTypesToExcelUtil(String sheetName, String typeName, String
+            subType, ArrayList<String> readSubTypesListFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
@@ -218,9 +242,10 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
     }
 
-    public ArrayList<String> readProfileFromExcel(String sheetName, ArrayList<String> getScripts) {
+    public ArrayList<String> readProfileFromExcel(String
+                                                          sheetName, ArrayList<String> getScripts) {
 
-        String fileName = NewUserActivity.fileName;
+        //String fileName = NewUserActivity.fileName;
         String excelFilePath = BASE_PATH + fileName;
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -231,8 +256,11 @@ public class SingleTonExpenseTrackerExcelUtil {
             } else {
                 String nameValuePosition = "B2";
                 String emailValuePosition = "B3";
+                String passwordValuePosition = "B4";
+
                 CellReference cellReference2 = new CellReference(nameValuePosition);
                 CellReference cellReference3 = new CellReference(emailValuePosition);
+                CellReference cellReference4 = new CellReference(passwordValuePosition);
 
                 Row row2 = sheet.getRow(cellReference2.getRow());
                 Cell cell2 = row2.getCell(cellReference2.getCol());
@@ -240,12 +268,18 @@ public class SingleTonExpenseTrackerExcelUtil {
                 Row row3 = sheet.getRow(cellReference3.getRow());
                 Cell cell3 = row3.getCell(cellReference3.getCol());
 
-                if ((cell2 != null) && (cell3 != null)) {
+                Row row4 = sheet.getRow(cellReference4.getRow());
+                Cell cell4 = row3.getCell(cellReference4.getCol());
+
+                if ((cell2 != null) && (cell3 != null) && (cell4 != null) ) {
                     String nameFromDB = cell2.getStringCellValue();
                     getScripts.add(nameFromDB);
 
                     String emailFromDB = cell3.getStringCellValue();
                     getScripts.add(emailFromDB);
+
+                    String passwordFromDB = cell4.getStringCellValue();
+                    getScripts.add(passwordFromDB);
                 }
             }
         } catch (IOException e) {
@@ -254,7 +288,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return getScripts;
     }
 
-    public String writeAddExpenseToSheet(String sheetName, HashMap<String, String> addExpenseDataMap) {
+    public String writeAddExpenseToSheet(String
+                                                 sheetName, HashMap<String, String> addExpenseDataMap) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
@@ -284,7 +319,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return "Expense Added Successfully";
     }
 
-    public ArrayList<HashMap<String, String>> readExpenseTransactionsFromExcelUtil(String sheetName, HashMap<String, Integer> expenseColumnIndices, ArrayList<HashMap<String, String>> expenseDataRowMapList) {
+    public ArrayList<HashMap<String, String>> readExpenseTransactionsFromExcelUtil(String
+                                                                                           sheetName, HashMap<String, Integer> expenseColumnIndices, ArrayList<HashMap<String, String>> expenseDataRowMapList) {
 
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , ==Started==");
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -374,7 +410,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return expenseDataRowMapList;
     }
 
-    public ArrayList<String> readAllSubPaymentsFromExcel(HashMap<String, ArrayList<String>> paymentToSubPaymentMap, String className) {
+    public ArrayList<String> readAllSubPaymentsFromExcel
+            (HashMap<String, ArrayList<String>> paymentToSubPaymentMap, String className) {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line1 ==started==" + className);
         ArrayList<String> readAllSubPaymentsFromExcel = new ArrayList<>();
         for (Map.Entry<String, ArrayList<String>> entry : paymentToSubPaymentMap.entrySet()) {
@@ -385,7 +422,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return readAllSubPaymentsFromExcel;
     }
 
-    public String updateExpenseToSheet(String sheetName, HashMap<String, String> updateExpenseDataMap) {
+    public String updateExpenseToSheet(String
+                                               sheetName, HashMap<String, String> updateExpenseDataMap) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
@@ -393,7 +431,7 @@ public class SingleTonExpenseTrackerExcelUtil {
             Sheet sheet = workbook.getSheet(sheetName);
 
             int rowIndexfromtop = 2;// first 2 rows are header rows, so skip them
-            if((sheet.getRow(rowIndexfromtop).getCell(expenseColumnIndices.get(TRANSACTIONID)).toString().equals(updateExpenseDataMap.get(TRANSACTIONID)))){
+            if ((sheet.getRow(rowIndexfromtop).getCell(expenseColumnIndices.get(TRANSACTIONID)).toString().equals(updateExpenseDataMap.get(TRANSACTIONID)))) {
                 sheet.getRow(rowIndexfromtop).createCell(1).setCellValue(updateExpenseDataMap.get(DATE));
                 sheet.getRow(rowIndexfromtop).createCell(2).setCellValue(updateExpenseDataMap.get(AMOUNT));
                 sheet.getRow(rowIndexfromtop).createCell(3).setCellValue(updateExpenseDataMap.get(CATEGORY));

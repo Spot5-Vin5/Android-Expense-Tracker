@@ -14,6 +14,7 @@ public class HeadingConstants {
     //Column Names
     public static final String NAME = "Name";
     public static final String EMAIL = "Email";
+    public static final String PASSWORD = "Password";
     public static final String TYPE = "Type";
     public static final String SUBTYPES = "SubTypes";
     public static final String LIMIT = "Limit";

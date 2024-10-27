@@ -27,4 +27,8 @@ _Feature: ExistingUser_
     a. User should enter email, this should validate all the file names in the folder.
     b. Once file name is matched, ask for password, now validate and do login.   
     c. Load Home page.
+    
+    --- Problems-----
+    Existing user page created, but email validation failing, password page not entering.
+    ---
 ```
