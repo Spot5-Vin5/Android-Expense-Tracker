@@ -89,7 +89,7 @@ public class TransactionExpenseAdapter extends BaseAdapter {
         moreOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopupMenu(moreOptions,transaction);
+                showPopupMenu(moreOptions, transaction);
             }
         });
 

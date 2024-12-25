@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,10 +40,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NewUserActivity extends AppCompatActivity {
-     private EditText editTextSignupName, editTextSignupEmail, editTextSignupPassword, editTextSignupConfirmPassword;
+    private EditText editTextSignupName, editTextSignupEmail, editTextSignupPassword, editTextSignupConfirmPassword;
     private Button buttonAccountCreate;
     private Context context = this;
 
@@ -65,8 +67,17 @@ public class NewUserActivity extends AppCompatActivity {
 
                 // Initialize variables in SharedVariables
                 SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
-                createExcelFile(sharedVariables);
-                startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
+                if (!isEmailInDatabase(sharedVariables)) {
+                    System.out.println("New Account Creating");
+                    createExcelFile(sharedVariables);
+                    startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
+                } else {
+                    System.out.println("Account already exists");
+                    Toast.makeText(NewUserActivity.this, "Account already exists", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(NewUserActivity.this, NewUserActivity.class));
+                }
+                //createExcelFile(sharedVariables);
+                //startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
             }
         });
     }
@@ -75,11 +86,14 @@ public class NewUserActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+/*
             // Initialize variables in SharedVariables
             SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
-            createExcelFile(sharedVariables);
+            if (!isEmailInDatabase(sharedVariables)) {
+                createExcelFile(sharedVariables);
+            }*/
         } else {
+            System.out.println("Permission denied!");
             Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -218,7 +232,7 @@ public class NewUserActivity extends AppCompatActivity {
             budgetSheet.createRow(0).createCell(0).setCellValue(BUDGET);
             budgetSheet.createRow(1).createCell(0).setCellValue(LIMIT);
 
-                                                    // filePath
+            // filePath
             Toast.makeText(this, sharedVariables.getFilePath(), Toast.LENGTH_SHORT).show();
             // Toast.makeText(this, "Profile created successfully", Toast.LENGTH_SHORT).show();
             try (FileOutputStream outputStream = new FileOutputStream(file)) {
@@ -231,4 +245,40 @@ public class NewUserActivity extends AppCompatActivity {
         }
         System.out.println("inside NewUserActivity class, inside createExcelFile(), ===ended===");
     }
+
+    private boolean isEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+        sharedVariables.setEmail(editTextSignupEmail.getText().toString());
+        System.out.println("email: " + sharedVariables.getEmail());
+        sharedVariables.setFileName(sharedVariables.getEmail() + "_expensesFile.xlsx");
+        System.out.println("fileName: " + sharedVariables.getFileName());
+        sharedVariables.setBasePath(getExternalFilesDir(null).getAbsolutePath());
+        System.out.println("basePath: " + sharedVariables.getBasePath());
+        sharedVariables.setExpensesFilesAppFolder(sharedVariables.getBasePath() + "/Expense Tracker App/");
+        System.out.println("expensesFilesAppFolder: " + sharedVariables.getExpensesFilesAppFolder());
+        sharedVariables.setFilePath(sharedVariables.getBasePath() + "/Expense Tracker App/" + sharedVariables.getFileName());
+        System.out.println("filePath: " + sharedVariables.getBasePath() + "/Expense Tracker App/" + sharedVariables.getFileName());
+
+        File appFolder = new File(sharedVariables.getExpensesFilesAppFolder());
+
+        if (!appFolder.exists()) {
+            boolean created = appFolder.mkdirs();
+            if (!created) {
+                System.out.println("Failed to create directory: " + sharedVariables.getExpensesFilesAppFolder());
+                return false;
+            }
+        }
+
+        File[] excelFiles = appFolder.listFiles((dir, name) -> name.endsWith(".xlsx") || name.endsWith(".xls"));
+        if (excelFiles == null) {
+            System.out.println("No files found in directory: " + sharedVariables.getExpensesFilesAppFolder());
+            return false;
+        }
+        ArrayList<String> accountExcelFiles = new ArrayList<>();
+        for (File file : excelFiles) {
+            System.out.println("files from folder: "+file.getName());
+            accountExcelFiles.add(file.getName());
+        }
+        return accountExcelFiles.contains(sharedVariables.getFileName());
+    }
+
 }
