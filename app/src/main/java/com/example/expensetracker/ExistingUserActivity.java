@@ -73,7 +73,7 @@ public class ExistingUserActivity extends AppCompatActivity {
         if (editTextSigninEmail != null) {
             return editTextSigninEmail.getText().toString().trim();
         }
-        return null;
+        return "user didn't sent email!!";
     }
 
     //private boolean isValidEmail(String email) {
