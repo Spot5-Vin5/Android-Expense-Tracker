@@ -25,6 +25,9 @@ public class ProfileReader {
     // public static void profileReader(Context context) {
     public static ArrayList<String> profileReader(String sheetName,ArrayList<String> getScripts) {
 
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+
         /*// reading from application.properties file
         ApplicationPropertiesReader propertiesReader = new ApplicationPropertiesReader(context);
         Properties properties = propertiesReader.getProperties("application.properties");
@@ -33,11 +36,11 @@ public class ProfileReader {
         // Retrieve data from your database
         //String basePath = "/Android/data/com.example.expensetracker/files/Expense Tracker App/";
 
-        String fileName = NewUserActivity.fileName;
-        String excelFilePath = BASE_PATH + fileName;
+       /* String fileName = NewUserActivity.fileName;
+        String excelFilePath = BASE_PATH + fileName;*/
        // String sheetName = PROFILE_ACTIVITY;
 
-        try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath));
+        try (FileInputStream fileInputStream = new FileInputStream(new File(sharedVariables.getFilePath()));
              Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
             Sheet sheet = workbook.getSheet(sheetName);

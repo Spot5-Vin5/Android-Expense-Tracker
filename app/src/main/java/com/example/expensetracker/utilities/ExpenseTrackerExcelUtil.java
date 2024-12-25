@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExpenseTrackerExcelUtil {
-
+/*
     public static String fileName = NewUserActivity.fileName;
     public static final String excelFilePath = BASE_PATH + fileName;
     //public static final String sheetName = CATEGORIES;
@@ -80,11 +80,11 @@ public class ExpenseTrackerExcelUtil {
             }
         } while (subCell.getCellType() != CellType.BLANK);
         typesToSubtypesMap.put(typeFromSheet, subCatList);
-       /* if (!subCatList.isEmpty()) {
+       *//* if (!subCatList.isEmpty()) {
             categoryToSubcategoriesMap.put(categoryFromSheet, subCatList);
         } else {
             categoryToSubcategoriesMap.put(categoryFromSheet, null);
-        }*/
+        }*//*
     }
 
     public static void writeTypesToExcelUtil(String sheetName, String type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
@@ -312,6 +312,6 @@ public class ExpenseTrackerExcelUtil {
         }
         System.out.println("inside ExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line4 ==ended==" +className);
         return readAllSubPaymentsFromExcel;
-    }
+    }*/
 
 }

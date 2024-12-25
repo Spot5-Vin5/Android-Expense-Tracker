@@ -9,26 +9,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign up"
-        android:textSize="30sp"
+        android:textSize="40sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"/>
+        android:layout_marginTop="130dp"/>
+
+    <TextView
+        android:id="@+id/textViewText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter your details to create an account"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="190dp"/>
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/editTextSignupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Name"
         android:inputType="text"
-        android:layout_below="@id/textViewText"
+        android:layout_below="@id/textViewText1"
         android:layout_marginTop="20dp"/>
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextSignupEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Email"
         android:inputType="text"
-        android:layout_below="@id/editTextName"
+        android:layout_below="@id/editTextSignupName"
         android:layout_marginTop="20dp"/>
 
 
@@ -38,11 +47,11 @@
         android:layout_height="wrap_content"
         android:hint="Enter File Name"
         android:inputType="text"
-        android:layout_below="@id/editTextEmail"
+        android:layout_below="@id/editTextSignupEmail"
         android:layout_marginTop="20dp"/>
 
     <EditText
-        android:id="@+id/editTextNewPassword"
+        android:id="@+id/editTextSignupPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Set a Password"
@@ -51,20 +60,20 @@
         android:layout_marginTop="20dp"/>
 
     <EditText
-        android:id="@+id/editTextNewPassword2"  
+        android:id="@+id/editTextSignupConfirmPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Confirm Password"
         android:inputType="textPassword"
-        android:layout_below="@id/editTextNewPassword"
+        android:layout_below="@id/editTextSignupPassword"
         android:layout_marginTop="20dp"/>
 
     <Button
-        android:id="@+id/buttonCreateFile"
+        android:id="@+id/buttonAccountCreate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create"
-        android:layout_below="@id/editTextNewPassword2"
+        android:layout_below="@id/editTextSignupConfirmPassword"
         android:layout_marginTop="20dp"/>
 
 </RelativeLayout>

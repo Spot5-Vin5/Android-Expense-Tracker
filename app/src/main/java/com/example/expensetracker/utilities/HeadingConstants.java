@@ -14,6 +14,7 @@ public class HeadingConstants {
     //Column Names
     public static final String NAME = "Name";
     public static final String EMAIL = "Email";
+    public static final String PASSWORD = "Password";
     public static final String TYPE = "Type";
     public static final String SUBTYPES = "SubTypes";
     public static final String LIMIT = "Limit";
@@ -25,7 +26,6 @@ public class HeadingConstants {
     public static final String PAYMENT = "PaymentType";
     public static final String PAYMENT_SUBTYPE = "PaymentSubtype";
     public static final String NOTE = "Note";
-
     public static final String CASH = "Cash";
     public static final String CASH1 = "cash";
     public static final String CHECK = "Check";

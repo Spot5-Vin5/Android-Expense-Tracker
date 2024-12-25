@@ -14,41 +14,98 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="168dp">
 
+        <!--<ImageView
+            android:id="@+id/imageViewLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp" />-->
+
+        <TextView
+            android:id="@+id/textViewWelcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="46dp"
+            android:textSize="20sp"
+            android:layout_marginTop="110dp"  />
+
         <TextView
             android:id="@+id/textViewText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Expense Tracker"
+            android:textSize="40sp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="130dp"
-            android:text="Expense Tracker" />
+            android:layout_marginTop="130dp"  />
 
         <TextView
             android:id="@+id/textViewPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Are you an existing or new user?"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="200dp"
-            android:text="Are you a existing or new user?" />
+            android:layout_marginTop="200dp" />
+
 
         <Button
             android:id="@+id/buttonExistingUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewPrompt"
-            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="50dp"
             android:layout_marginTop="20dp"
-            android:text="Existing User" />
+            android:text="Sign In" />
+
+        <TextView
+            android:id="@+id/textViewPromptSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonExistingUser"
+            android:text="to Access Account"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp" />
+
+        <TextView
+            android:id="@+id/textViewPromptLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewPromptSignIn"
+            android:text="_____________________"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp" />
 
         <Button
             android:id="@+id/buttonNewUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewPrompt"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="50dp"
-            android:text="New User" />
+            android:layout_below="@id/textViewPromptLine"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Sign Up" />
+
+        <TextView
+            android:id="@+id/textViewPromptSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonNewUser"
+            android:text="New to Expense Tracker? Create an account."
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp" />
+
+        <TextView
+            android:id="@+id/textViewPromptNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewPromptSignUp"
+            android:text="Note:  Your data is safe with us."
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="100dp" />
+
 
     </RelativeLayout>
 

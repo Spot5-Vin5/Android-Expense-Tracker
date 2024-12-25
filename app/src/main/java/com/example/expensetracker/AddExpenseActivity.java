@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.expensetracker.models.TransactionModel;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,10 +53,12 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
         setContentView(R.layout.activity_add_expense);
         System.out.println("inside AddExpenseActivity class, inside onCreate () ==start== 123");
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
-        loadDataFromSheet();
+        loadDataFromSheet(sharedVariables);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.userExpense), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -67,7 +70,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         configureDatePicker();
         configureSpinners();
         handleTransactionData();
-        handleSubmitButton();
+        handleSubmitButton(sharedVariables);
         System.out.println("inside AddExpenseActivity class, inside onCreate () ==ended== 123");
     }
 
@@ -181,10 +184,10 @@ public class AddExpenseActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
-    private void loadDataFromSheet() {
+    private void loadDataFromSheet(SingleTonSharedVariables sharedVariables) {
 
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () ==start== ");
-        readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES);
+        readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES, sharedVariables.getFilePath());
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil : " + readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil);
         readAllCategoryListFromSheet = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next();
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readAllCategoryListFromSheet : " + readAllCategoryListFromSheet);
@@ -192,7 +195,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () categoryToCategoriesSubTypesMap : " + categoryToCategoriesSubTypesMap);
 
 
-        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil : " + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
         readPaymentListFromSheet = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next();
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readPaymentListFromSheet : " + readPaymentListFromSheet);
@@ -228,7 +231,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         }
     }
 
-    private void handleSubmitButton() {
+    private void handleSubmitButton(SingleTonSharedVariables sharedVariables) {
         System.out.println("inside AddExpenseActivity class, inside handleSubmitButton () ==started==");
         submitFormButton.setOnClickListener(v -> {
             String amount = amountInputField.getText().toString();
@@ -258,7 +261,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                 addExpenseDataMap.put(PAYMENT_SUBTYPE, paymentSubtype);
                 addExpenseDataMap.put(NOTE, note);
 
-                String submitMessage = singleTonExpenseTrackerExcelUtil.writeAddExpenseToSheet(EXPENSE, addExpenseDataMap);
+                String submitMessage = singleTonExpenseTrackerExcelUtil.writeAddExpenseToSheet(EXPENSE, addExpenseDataMap, sharedVariables.getFilePath());
                 Toast.makeText(AddExpenseActivity.this, submitMessage, Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(AddExpenseActivity.this, AppHomeActivity.class);

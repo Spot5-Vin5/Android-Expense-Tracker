@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         buttonExistingUser = findViewById(R.id.buttonExistingUser);
         buttonNewUser = findViewById(R.id.buttonNewUser);
 
+        System.out.println("inside MainActivity class,=== before buttonExistingUser button click===");
         buttonExistingUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        System.out.println("inside main class,=== before new button click===");
+        System.out.println("inside MainActivity class,=== before buttonNewUser button click===");
         buttonNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

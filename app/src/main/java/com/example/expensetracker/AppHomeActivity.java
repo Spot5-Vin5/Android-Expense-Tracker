@@ -24,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.expensetracker.models.HomeCategoryModel;
 import com.example.expensetracker.adapters.HomeCategoryAdapter;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -43,19 +44,13 @@ public class AppHomeActivity extends AppCompatActivity {
     private HashMap<String, ArrayList<String>> categoryToSubcategoriesMap = new HashMap<>();
     private ArrayList<String> readAllCategoryListFromSheet; //= new ArrayList<>();
     //private ArrayList<String> singletonreadAllCategoryListFromSheet; //= new ArrayList<>();
-
     private HashMap<String, ArrayList<String>> paymentToSubPaymentMap = new HashMap<>();
-
-    HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
+    private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
     private ArrayList<String> readAllPaymentTypeListFromSheet; //= new ArrayList<>();
-    private ArrayList<String> readAllSubPaymentListFromSheet; //= new ArrayList<>();
     private ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel;// = new ArrayList<>();
-
     private int totalMonthExpense = 0;
     private HashMap<String, Integer> eachCategoryAmount = new HashMap<>();
-    //public static HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
     private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
-
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -66,12 +61,8 @@ public class AppHomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
-        // Example of reading an Excel file
-        //File excelFile = new File(getExternalFilesDir(null), "expenses.xlsx");
-        // excelUtil.readExcelFile(excelFile);
-
-      /*  singletonreadAllCategoryListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(CATEGORIES, new ArrayList<String>(), categoryToSubcategoriesMap);
-        System.out.println("inside AppHomeActivity class, 1 onCreate(), singletonreadAllCategoryListFromSheet: " + singletonreadAllCategoryListFromSheet);*/
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
 
         System.out.println("inside AppHomeActivity class, 1 onCreate(), ===started===");
         super.onCreate(savedInstanceState);
@@ -84,7 +75,7 @@ public class AppHomeActivity extends AppCompatActivity {
         initializeUI();
         System.out.println("inside AppHomeActivity class,inside 3 onCreate(), before loadData()");
         // Load data
-        loadData();
+        loadData(sharedVariables);
         System.out.println("inside AppHomeActivity class,inside 4 onCreate(), before setupListView()");
         //System.out.println("inside AppHomeActivity class, inside 4 onCreate(), starting1:, "+eachPaymentTypeAmount);
         // Set up ListView
@@ -109,11 +100,9 @@ public class AppHomeActivity extends AppCompatActivity {
         if (profileButton != null) {
             profileButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ProfileActivity.class)));
         }
-
         if (addExpenseButton != null) {
             addExpenseButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, AddExpenseActivity.class)));
         }
-
         if (appHomeMenuButton != null) {
             appHomeMenuButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, HomeMenuActivity.class)));
         }
@@ -124,13 +113,14 @@ public class AppHomeActivity extends AppCompatActivity {
     }
 
 
-    private void loadData() {
+    private void loadData(SingleTonSharedVariables sharedVariables) {
+        System.out.println("inside AppHomeActivity class, inside loadData ()");
 
         System.out.println("inside AppHomeActivity class, inside loadData () 1 of 8, ==Started==");
-        readAllCategoryListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(CATEGORIES, new ArrayList<String>(), categoryToSubcategoriesMap);
+        readAllCategoryListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(CATEGORIES, new ArrayList<String>(), categoryToSubcategoriesMap, sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 2 of 8, readAllCategoryListFromSheet :" + readAllCategoryListFromSheet);
 
-        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
 
         readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -139,20 +129,15 @@ public class AppHomeActivity extends AppCompatActivity {
         paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readAllPaymentTypeListFromSheet);
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, paymentToSubPaymentMap" + paymentToSubPaymentMap);
 
-      /*  readAllPaymentTypeListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(PAYMENT_TYPE, new ArrayList<String>(), paymentToSubPaymentMap);
-        System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, readAllPaymentListFromSheet" + readAllPaymentTypeListFromSheet);  */
-        //  readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
-        // readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
-        // System.out.println("inside AppHomeActivity class, inside loadData () 4 of 8, readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
-        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
+        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 5 of 8, readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
         System.out.println("inside AppHomeActivity class, inside loadData () 6 of 8, before calculateTotalMonthExpense ()");
         calculateTotalMonthExpense();
+
         System.out.println("inside AppHomeActivity class, inside loadData () 7 of 8, before calculateEachCategoryAmount()");
         calculateEachCategoryAmount();
-        /*System.out.println("inside AppHomeActivity class, inside loadData () 8 of 8, before calculateEachPaymentTypeAmount()");
-        calculateEachPaymentTypeAmount();*/
+
         System.out.println("inside AppHomeActivity class, inside loadData () 8 of 8, ==ended==");
     }
 
@@ -161,12 +146,6 @@ public class AppHomeActivity extends AppCompatActivity {
         ListView homeCategoryList = findViewById(R.id.home_category_model_list);
 
         System.out.println("inside AppHomeActivity class, inside setupListView () 2" + homeCategoryList);
-        // Create a list of HomeCategoryModel objects
-
-       /* // Populate the list with your data
-        expenses.add(new HomeCategoryModel(R.drawable.some_icon, "Expense 1", "$100", "16.7%"));
-        expenses.add(new HomeCategoryModel(R.drawable.some_icon, "Expense 2", "$200", "33.3%"));
-        expenses.add(new HomeCategoryModel(R.drawable.some_icon, "Expense 3", "$300", "40%"));*/
 
         // Populate the list with dynamic data from excel
         System.out.println("inside AppHomeActivity class, inside setupListView () 3, setExpenses() calling :");
@@ -202,7 +181,6 @@ public class AppHomeActivity extends AppCompatActivity {
                 System.out.println("Total month expense is zero, cannot calculate percentages.");
             }
         }
-
         return homeCategoryModelExpensesList;
     }
 
@@ -244,7 +222,6 @@ public class AppHomeActivity extends AppCompatActivity {
                             eachCategoryAmount.put(category, eachCategoryAmount.get(category) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
                             System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 6 of 7, else " + eachCategoryAmount);
                         }
-
                     }
                 } catch (NumberFormatException | NullPointerException e) {
                     e.printStackTrace();
@@ -271,7 +248,6 @@ public class AppHomeActivity extends AppCompatActivity {
         params.width = (int) (370 * getResources().getDisplayMetrics().density); // Set desired width
         params.height = (int) (370 * getResources().getDisplayMetrics().density); // Set desired height
         pieChart.setLayoutParams(params);
-
         System.out.println("inside AppHomeActivity class, inside setupPieChart () 2, pieChart setted up ====ended===");
     }
 
@@ -299,10 +275,4 @@ public class AppHomeActivity extends AppCompatActivity {
         pieChart.invalidate(); // Refresh the chart to apply changes
         System.out.println("inside AppHomeActivity class, inside loadPieChartData () 5, ==ended==");
     }
-
-
-/*    public HashMap<String, Integer> getEachPaymentTypeAmount() {
-        System.out.println("inside AppHomeActivity class, inside getEachPaymentTypeAmount () : starting1, "+eachPaymentTypeAmount);
-        return eachPaymentTypeAmount;
-    }*/
 }

@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,9 @@ public class PaymentTypeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
-        loadDataFromExcel();
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        loadDataFromExcel(sharedVariables);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_type);
@@ -41,12 +44,12 @@ public class PaymentTypeActivity extends AppCompatActivity {
 
         setupAdapter(); // original place
         Button addCatButton = findViewById(R.id.addPaymentButton);
-        addCatButton.setOnClickListener(v -> showAddCategoryDialog());
+        addCatButton.setOnClickListener(v -> showAddCategoryDialog(sharedVariables));
         //  setupAdapter(); // testing place
     }
 
-    private void loadDataFromExcel() {
-        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+    private void loadDataFromExcel(SingleTonSharedVariables sharedVariables) {
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel () , readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
 
         readPaymentListFromSheet = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -98,7 +101,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
         paymentListView.setAdapter(paymentAdapter);
     }
 
-    private void showAddCategoryDialog() {
+    private void showAddCategoryDialog(SingleTonSharedVariables sharedVariables) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_payment_type_dialog, null);
         builder.setView(customLayout);
@@ -108,7 +111,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
             String payment = editText.getText().toString();
             if (!payment.isEmpty() && !readPaymentListFromSheet.contains(payment)) {
                 //  ExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE,payment, readPaymentListfromSheet, paymentToSubpaymentMap);//edit
-                singleTonExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE, payment, readPaymentListFromSheet, paymentToPaymentSubTypesMap);//edit
+                singleTonExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE, payment, readPaymentListFromSheet, paymentToPaymentSubTypesMap, sharedVariables.getFilePath());//edit
                 paymentAdapter.notifyDataSetChanged();
                 // setupAdapter(); //testing to refresh adapter even after notifying
             }

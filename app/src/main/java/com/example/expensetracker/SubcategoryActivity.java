@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ public class SubcategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
-        loadDataFromSheet();
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        loadDataFromSheet(sharedVariables);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subcategory);
         subcategoryListView = findViewById(R.id.subcategoryList);
@@ -46,12 +49,12 @@ public class SubcategoryActivity extends AppCompatActivity {
 
         setupAdapter(); // original place
         Button addSubcatButton = findViewById(R.id.addSubcategoryButton);
-        addSubcatButton.setOnClickListener(v -> showAddSubcategoryDialog(categoryName));
+        addSubcatButton.setOnClickListener(v -> showAddSubcategoryDialog(categoryName,sharedVariables));
         //  setupAdapter(); // testing place
     }
 
-    private void loadDataFromSheet() {
-        readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES);
+    private void loadDataFromSheet(SingleTonSharedVariables sharedVariables) {
+        readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES, sharedVariables.getFilePath() );
         System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil);
 
        /* readCategoryListFromSheet = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -107,7 +110,7 @@ public class SubcategoryActivity extends AppCompatActivity {
         subcategoryListView.setAdapter(subcategoryAdapter);
     }
 
-    private void showAddSubcategoryDialog(String categoryName) {
+    private void showAddSubcategoryDialog(String categoryName, SingleTonSharedVariables sharedVariables) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_subcategory_dialog, null);
         builder.setView(customLayout);
@@ -117,7 +120,7 @@ public class SubcategoryActivity extends AppCompatActivity {
             String subcategory = editText.getText().toString();
             if (!subcategory.isEmpty() && !readSubCategoryListFromSheet.contains(subcategory)) {
                 //  ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES ,categoryName, subcategory, readSubCategoryListFromSheet, categoryToSubcategoriesMap);
-                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES, categoryName, subcategory, readSubCategoryListFromSheet, categoryToCategoriesSubTypesMap);
+                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(CATEGORIES, categoryName, subcategory, readSubCategoryListFromSheet, categoryToCategoriesSubTypesMap, sharedVariables.getFilePath());
                 subcategoryAdapter.notifyDataSetChanged();
             }
         });
