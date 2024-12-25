@@ -29,6 +29,6 @@ _Feature: ExistingUser_
     c. Load Home page.
     
     --- Problems-----
-    Existing user page created, but email validation failing, password page not entering.
+    Existing user page created, email and password validation done able to go to Home Page successfully.
     ---
 ```

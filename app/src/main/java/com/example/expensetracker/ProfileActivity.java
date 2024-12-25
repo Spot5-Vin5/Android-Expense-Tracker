@@ -1,5 +1,7 @@
 package com.example.expensetracker;
 
+import static com.example.expensetracker.utilities.HeadingConstants.EMAIL;
+import static com.example.expensetracker.utilities.HeadingConstants.NAME;
 import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
 
 import android.os.Bundle;
@@ -12,11 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-
-import com.example.expensetracker.utilities.ExpenseTrackerExcelUtil;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-
-import java.util.ArrayList;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 public class ProfileActivity extends AppCompatActivity {
     private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
@@ -26,41 +25,33 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
 
         Log.i(TAG, "Inside ProfileActivity class: " + "onCreate method()");
+        System.out.println("Inside ProfileActivity class: " + "onCreate method()");
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
-
+        System.out.println("Inside ProfileActivity class: " + "onCreate method() 2");
         // Correctly cast to TextView
         TextView nameTextView = (TextView) findViewById(R.id.nameTextView);
         TextView emailTextView = (TextView) findViewById(R.id.emailTextView);
-
-     /*   // Retrieve data from your database (replace with actual data)
-        String nameFromDB = "John Doe"; // Example name
-        String emailFromDB = "john.doe@example.com"; // Example email
-
-        nameTextView.setText(nameFromDB);
-        emailTextView.setText(emailFromDB);*/
+        System.out.println("Inside ProfileActivity class: " + "onCreate method() 3");
 
         // Retrieve data from your database
         String nameFromDB;
         String emailFromDB;
 
-        ArrayList<String> getScripts = new ArrayList<>();
+        //var scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY,  email);
+        var scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY,  sharedVariables);
 
-        ArrayList<String> scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, getScripts);
-        if (scripts.get(0).contains("@")) {
-            emailFromDB = scripts.get(0);
-            nameFromDB = scripts.get(1);
-        } else {
-            nameFromDB = scripts.get(0);
-            emailFromDB = scripts.get(1);
+        if (scripts.get(EMAIL).contains("@")) {
+            emailFromDB = scripts.get(EMAIL);
+            nameFromDB = scripts.get(NAME);
+            nameTextView.setText(nameFromDB);
+            emailTextView.setText(emailFromDB);
         }
-
-        nameTextView.setText(nameFromDB);
-        emailTextView.setText(emailFromDB);
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.userProfile), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

@@ -1,7 +1,6 @@
 package com.example.expensetracker.utilities;
 
 import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
-import static com.example.expensetracker.utilities.HeadingConstants.BASE_PATH;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.DATE;
 import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
@@ -12,17 +11,12 @@ import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONI
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.content.Context;
-import android.text.TextUtils;
-
-import com.example.expensetracker.ExistingUserActivity;
-import com.example.expensetracker.NewUserActivity;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -32,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class SingleTonExpenseTrackerExcelUtil {
     private static volatile SingleTonExpenseTrackerExcelUtil instance = null;
@@ -54,44 +49,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         return instance;
     }
 
-    public static String fileName;
-    static {
-        //static block
-        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside SingleTonExpenseTrackerExcelUtil () , ==Started==");
-
-        String newUserEmail = NewUserActivity.email;
-        String existingUserEmail = ExistingUserActivity.email;
-
-        if (!TextUtils.isEmpty(newUserEmail) && android.util.Patterns.EMAIL_ADDRESS.matcher(newUserEmail).matches()) {
-            fileName = NewUserActivity.fileName;
-        } else if (!TextUtils.isEmpty(existingUserEmail) && android.util.Patterns.EMAIL_ADDRESS.matcher(existingUserEmail).matches()) {
-            {
-                fileName = ExistingUserActivity.fileName;
-            }
-            System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside SingleTonExpenseTrackerExcelUtil () , ==Ended==");
-        }
-    }
-
-    public static final String excelFilePath = BASE_PATH + fileName;
-    // Method to read from an Excel file
-
-/*    public void readExcelFile(File file) {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            Workbook workbook = new XSSFWorkbook(fis);
-            Sheet sheet = workbook.getSheetAt(0);
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    // Read the cell contents
-                    Log.d("ExcelUtil", "Cell Value: " + cell.toString());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    public HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil
-            (String sheetName) {
+    public HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil(String sheetName, String excelFilePath) {
         HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>();
         ArrayList<String> typeList = new ArrayList<>();
         HashMap<String, ArrayList<String>> typesToSubtypesMap = new HashMap<>();
@@ -125,10 +83,9 @@ public class SingleTonExpenseTrackerExcelUtil {
         return typesListAndSubTypesMap;
     }
 
-    public ArrayList<String> readTypesFromExcelUtil(String
-                                                            sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public ArrayList<String> readTypesFromExcelUtil(String sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap, String excelFilePath) {
+        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () excelFilePath: " + excelFilePath);
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 1 of 2, ==Started==");
-
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             //    Workbook workbook =NewUserActivity.workbook; // for testing
             Sheet sheet = workbook.getSheet(sheetName);
@@ -176,8 +133,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         typesToSubtypesMap.put(typeFromSheet, subCatList);
     }
 
-    public void writeTypesToExcelUtil(String sheetName, String
-            type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public void writeTypesToExcelUtil(String sheetName, String type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap, String excelFilePath) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
@@ -201,13 +157,10 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
     }
 
-    public void writeSubTypesToExcelUtil(String sheetName, String typeName, String
-            subType, ArrayList<String> readSubTypesListFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
-
+    public void writeSubTypesToExcelUtil(String sheetName, String typeName, String subType, ArrayList<String> readSubTypesListFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap, String excelFilePath) {
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             if (!(readSubTypesListFromSheet.contains(subType))) {
-
                 for (Row row : sheet) {
                     Cell cell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     if (cell != null && (cell.getCellType() == CellType.STRING || cell.getCellType() != CellType.BLANK)) {
@@ -242,54 +195,58 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
     }
 
-    public ArrayList<String> readProfileFromExcel(String
-                                                          sheetName, ArrayList<String> getScripts) {
+    //public ArrayList<String> readProfileFromExcel(String sheetName,  String email) {
+    public TreeMap<String, String> readProfileFromExcel(String sheetName, SingleTonSharedVariables sharedVariables) {
+        //ArrayList<String> scripts = new ArrayList<String>();
+        TreeMap<String, String> profileDetails = new TreeMap<>();
+        int columnIndex = 0;
+        System.out.println("readProfileFromExcel method() == started==");
+        /*//String fileName = NewUserActivity.fileName;
+        String excelFilePath = BASE_PATH + fileName;*/
+        String fileName = sharedVariables.getEmail() + "_expensesFile.xlsx";
+        System.out.println("readProfileFromExcel() fileName: " + fileName);
+        /*String excelFilePath = BASE_PATH + fileName;
+        System.out.println("readProfileFromExcel() excelFilePath: " + excelFilePath);*/
 
-        //String fileName = NewUserActivity.fileName;
-        String excelFilePath = BASE_PATH + fileName;
+        //String basePath = BASE_PATH;
+        System.out.println("readProfileFromExcel() basePath: " + sharedVariables.getBasePath());
+        //String expensesFilesAppFolder = BASE_PATH + fileName;
+        String expensesFilesAppFolder = sharedVariables.getExpensesFilesAppFolder();
+        System.out.println("readProfileFromExcel() expensesFilesAppFolder: " + expensesFilesAppFolder);
+        System.out.println("readProfileFromExcel method() excelFilePath: " + sharedVariables.getFilePath());
+        try (FileInputStream fileInputStream = new FileInputStream(new File(sharedVariables.getFilePath())); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
-        try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-
+            System.out.println("==inside try loop==");
+            System.out.println("sheetName: " + sheetName);
             Sheet sheet = workbook.getSheet(sheetName);
+
             if (sheet == null) {
                 System.out.println("Sheet not found: " + sheetName);
             } else {
-                String nameValuePosition = "B2";
-                String emailValuePosition = "B3";
-                String passwordValuePosition = "B4";
-
-                CellReference cellReference2 = new CellReference(nameValuePosition);
-                CellReference cellReference3 = new CellReference(emailValuePosition);
-                CellReference cellReference4 = new CellReference(passwordValuePosition);
-
-                Row row2 = sheet.getRow(cellReference2.getRow());
-                Cell cell2 = row2.getCell(cellReference2.getCol());
-
-                Row row3 = sheet.getRow(cellReference3.getRow());
-                Cell cell3 = row3.getCell(cellReference3.getCol());
-
-                Row row4 = sheet.getRow(cellReference4.getRow());
-                Cell cell4 = row3.getCell(cellReference4.getCol());
-
-                if ((cell2 != null) && (cell3 != null) && (cell4 != null) ) {
-                    String nameFromDB = cell2.getStringCellValue();
-                    getScripts.add(nameFromDB);
-
-                    String emailFromDB = cell3.getStringCellValue();
-                    getScripts.add(emailFromDB);
-
-                    String passwordFromDB = cell4.getStringCellValue();
-                    getScripts.add(passwordFromDB);
+                System.out.println("Else block started");
+                for (Row row : sheet) {
+                    System.out.println("Else block for loop started");
+                    Cell cellColumnA = row.getCell(columnIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellColumnB = row.getCell(columnIndex + 1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    if (cellColumnB != null && (cellColumnB.getCellType() == CellType.STRING || cellColumnB.getCellType() != CellType.BLANK)) {
+                        //String typeFromSheet = cellColumnB.getStringCellValue();
+                        System.out.println("Else block 2" + "if block started");
+                        profileDetails.put(cellColumnA.getStringCellValue(), cellColumnB.getStringCellValue());
+                        System.out.println("Else block 2" + "if block ended");
+                    }
+                    System.out.println("Else block for loop ended");
                 }
+                System.out.println("Else block ended");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return getScripts;
+        System.out.println("readProfileFromExcel method() == ended==");
+        //System.out.println("readProfileFromExcel method() getScripts: " + scripts);
+        return profileDetails;
     }
 
-    public String writeAddExpenseToSheet(String
-                                                 sheetName, HashMap<String, String> addExpenseDataMap) {
+    public String writeAddExpenseToSheet(String sheetName, HashMap<String, String> addExpenseDataMap, String excelFilePath) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
@@ -319,8 +276,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         return "Expense Added Successfully";
     }
 
-    public ArrayList<HashMap<String, String>> readExpenseTransactionsFromExcelUtil(String
-                                                                                           sheetName, HashMap<String, Integer> expenseColumnIndices, ArrayList<HashMap<String, String>> expenseDataRowMapList) {
+    public ArrayList<HashMap<String, String>> readExpenseTransactionsFromExcelUtil(String sheetName, HashMap<String, Integer> expenseColumnIndices, ArrayList<HashMap<String, String>> expenseDataRowMapList, String excelFilePath) {
 
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readExpenseTransactionsFromExcelUtil () , ==Started==");
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -422,8 +378,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         return readAllSubPaymentsFromExcel;
     }
 
-    public String updateExpenseToSheet(String
-                                               sheetName, HashMap<String, String> updateExpenseDataMap) {
+    public String updateExpenseToSheet(String sheetName, HashMap<String, String> updateExpenseDataMap, String excelFilePath) {
 
         try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 

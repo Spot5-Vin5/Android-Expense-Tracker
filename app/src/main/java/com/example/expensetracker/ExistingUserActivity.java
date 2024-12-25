@@ -8,29 +8,34 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class ExistingUserActivity extends AppCompatActivity {
 
+    private static final String TAG = "ExistingUserActivity";
     private EditText editTextSigninEmail;
     private EditText editTextSigninPassword;
     private Button buttonSigninNext;
     private Button buttonSignIn;
-    public static String basePath, fileName, filePath, expensesFilesAppFolder;
-    public static String email;
+
     private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
         super.onCreate(savedInstanceState);
         // Initially set content view to email layout
         setContentView(R.layout.activity_existing_user);
@@ -41,79 +46,166 @@ public class ExistingUserActivity extends AppCompatActivity {
         buttonSigninNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                email = editTextSigninEmail.getText().toString().trim();
-                if (isValidEmail(email)) {
-                    if (isEmailInDatabase(email)) {
-                        // Switch to password layout on successful email validation and existence in the database
-                        loadPasswordLayout();
-                    } else {
-                        // Show error message if email is not found in the database
-                        Toast.makeText(ExistingUserActivity.this, "Email not found. Please check your email or sign up.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Show error message if email format is invalid
-                    Toast.makeText(ExistingUserActivity.this, "Invalid email. Please try again.", Toast.LENGTH_SHORT).show();
-                }
+                handleSigninNextClick(sharedVariables);
             }
         });
     }
 
-    private boolean isValidEmail(String email) {
-        if (email.contains("@gmail.com")) {
-            return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    private void handleSigninNextClick(SingleTonSharedVariables sharedVariables) {
+        //email = getEmailFromEditText();
+        sharedVariables.setEmail(getEmailFromEditText());
+        //if (email == null) {
+        if (sharedVariables.getEmail() == null) {
+            showToast("Enter email to login!");
+            return;
         }
-        return false;
+
+        //if (isValidEmail(email)) {
+        if (isValidEmail(sharedVariables)) {
+            // checkEmailInDatabase(email);
+            checkEmailInDatabase(sharedVariables);
+        } else {
+            showToast("Invalid email. Please try again.");
+        }
     }
 
-    private boolean isEmailInDatabase(String email) {
+    private String getEmailFromEditText() {
+        if (editTextSigninEmail != null) {
+            return editTextSigninEmail.getText().toString().trim();
+        }
+        return null;
+    }
 
-        fileName = email + "_expensesFile.xlsx"; // check this if it works
-        basePath = getExternalFilesDir(null).getAbsolutePath(); // App-specific external directory
-        expensesFilesAppFolder = basePath + "/Expense Tracker App/"; // Create the folder path
-        // Construct the full file path
-        //filePath = basePath + "/Expense Tracker App/" + fileName;
+    //private boolean isValidEmail(String email) {
+    private boolean isValidEmail(SingleTonSharedVariables sharedVariables) {
+        //return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return !TextUtils.isEmpty(sharedVariables.getEmail()) && android.util.Patterns.EMAIL_ADDRESS.matcher(sharedVariables.getEmail()).matches();
+    }
 
-        // Create a File object for the folder
-        //File folder = new File(basePath);
-        File appFolder = new File(expensesFilesAppFolder);
-        // List all files in the folder
+    private void checkEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //boolean emailExists = isEmailInDatabase(email);
+                boolean emailExists = isEmailInDatabase(sharedVariables);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (emailExists) {
+                            System.out.println("Email exists in database. Loading password layout.");
+                            //loadPasswordLayout(email);
+                            loadPasswordLayout(sharedVariables);
+                        } else {
+                            System.out.println("Email not found. Please check your email or sign up.");
+                            showToast("Email not found. Please check your email or sign up.");
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    //private boolean isEmailInDatabase(String email) {
+    private boolean isEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+        // fileName = email + "_expensesFile.xlsx";
+        // Log.d(TAG, "fileName: " + fileName);
+        // System.out.println("fileName: " + fileName);
+        sharedVariables.setFileName(sharedVariables.getEmail() + "_expensesFile.xlsx");
+        System.out.println("fileName: " + sharedVariables.getFileName());
+
+        /*basePath = getExternalFilesDir(null).getAbsolutePath();
+        Log.d(TAG, "basePath: " + basePath);
+        System.out.println("basePath: " + basePath);*/
+        sharedVariables.setBasePath(getExternalFilesDir(null).getAbsolutePath());
+        System.out.println("basePath: " + sharedVariables.getBasePath());
+
+        /*expensesFilesAppFolder = basePath + "/Expense Tracker App/";
+        Log.d(TAG, "expensesFilesAppFolder: " + expensesFilesAppFolder);
+        System.out.println("expensesFilesAppFolder: " + expensesFilesAppFolder);*/
+        sharedVariables.setExpensesFilesAppFolder(sharedVariables.getBasePath() + "/Expense Tracker App/");
+        System.out.println("expensesFilesAppFolder: " + sharedVariables.getExpensesFilesAppFolder());
+
+        sharedVariables.setFilePath(sharedVariables.getBasePath() + "/Expense Tracker App/" + sharedVariables.getFileName());
+        System.out.println("filePath: " + sharedVariables.getBasePath() + "/Expense Tracker App/" + sharedVariables.getFileName());
+
+        //File appFolder = new File(expensesFilesAppFolder);
+        File appFolder = new File(sharedVariables.getExpensesFilesAppFolder());
+
+        if (!appFolder.exists()) {
+            boolean created = appFolder.mkdirs();
+            if (!created) {
+                //Log.e(TAG, "Failed to create directory: " + expensesFilesAppFolder);
+                Log.e(TAG, "Failed to create directory: " + sharedVariables.getExpensesFilesAppFolder());
+                System.out.println("Failed to create directory: " + sharedVariables.getExpensesFilesAppFolder());
+                return false;
+            }
+        }
+
         File[] excelFiles = appFolder.listFiles((dir, name) -> name.endsWith(".xlsx") || name.endsWith(".xls"));
-        // Store file names in an ArrayList
+        if (excelFiles == null) {
+            //Log.e(TAG, "No files found in directory: " + expensesFilesAppFolder);
+            Log.e(TAG, "No files found in directory: " + sharedVariables.getExpensesFilesAppFolder());
+            System.out.println("No files found in directory: " + sharedVariables.getExpensesFilesAppFolder());
+            return false;
+        }
+
         ArrayList<String> accountExcelFiles = new ArrayList<>();
-        for (File fileName : excelFiles) {
-            accountExcelFiles.add(fileName.getName());
+        for (File file : excelFiles) {
+            System.out.println(file.getName());
+            accountExcelFiles.add(file.getName());
         }
-        if (accountExcelFiles.contains(fileName)) {
-            return true;
-        }
-        return false;
+        //return accountExcelFiles.contains(fileName);
+        return accountExcelFiles.contains(sharedVariables.getFileName());
     }
 
-    private void loadPasswordLayout() {
-        // Switch to password layout
+    private void loadPasswordLayout(SingleTonSharedVariables sharedVariables) {
+        System.out.println("Loading password layout.");
         setContentView(R.layout.activity_existing_user_password);
-        // Initialize password layout elements
         editTextSigninPassword = findViewById(R.id.editTextSigninPassword);
         buttonSignIn = findViewById(R.id.buttonSignin);
-        // Set up click listener for 'Sign In' button
 
-        ArrayList<String> getScripts = new ArrayList<>();
-        ArrayList<String> scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, getScripts);
-        String passwordInDB = scripts.get(0);
+        if (editTextSigninPassword == null || buttonSignIn == null) {
+            System.out.println("Failed to initialize password layout elements.");
+            showToast("Error loading password layout. Please try again.");
+            return;
+        }
+        //ArrayList<String> getScripts = new ArrayList<>();
+        //ArrayList<String> getScripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, email);
+        //TreeMap<String, String> getScripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, email);
+        TreeMap<String, String> getScripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, sharedVariables);
+        if (getScripts.isEmpty()) {
+            System.out.println("No scripts found in database.");
+            showToast("Error loading password. Please try again.");
+            return;
+        }
+        System.out.println("scripts: " + getScripts);
+        String passwordInDB = getScripts.get("Password");
 
         buttonSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String signInPassword = editTextSigninPassword.getText().toString().trim();
-                // Validate password as needed (e.g., non-empty or more checks)
-                if (!TextUtils.isEmpty(signInPassword) && signInPassword.equals(passwordInDB)) {
-                    Toast.makeText(ExistingUserActivity.this, "SignIn Successful", Toast.LENGTH_SHORT).show();
-                    // Proceed with login or navigate to the next activity
-                    startActivity(new Intent(ExistingUserActivity.this, AppHomeActivity.class));
-                } else {
-                    Toast.makeText(ExistingUserActivity.this, "Please enter correct password", Toast.LENGTH_SHORT).show();
-                }
+
+                handleSignInClick(passwordInDB);
             }
         });
+    }
+
+    private void handleSignInClick(String passwordInDB) {
+        String signInPassword = editTextSigninPassword.getText().toString().trim();
+        if (!TextUtils.isEmpty(signInPassword) && signInPassword.equals(passwordInDB)) {
+
+            System.out.println("SignIn Successful");
+            //System.out.println("fileName: " + fileName);
+            showToast("SignIn Successful");
+            startActivity(new Intent(ExistingUserActivity.this, AppHomeActivity.class));
+            finish();
+
+        } else {
+            showToast("Please enter correct password");
+        }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(ExistingUserActivity.this, message, Toast.LENGTH_LONG).show();
     }
 }

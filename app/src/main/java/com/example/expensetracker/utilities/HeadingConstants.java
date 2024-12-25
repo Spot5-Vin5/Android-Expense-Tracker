@@ -26,7 +26,6 @@ public class HeadingConstants {
     public static final String PAYMENT = "PaymentType";
     public static final String PAYMENT_SUBTYPE = "PaymentSubtype";
     public static final String NOTE = "Note";
-
     public static final String CASH = "Cash";
     public static final String CASH1 = "cash";
     public static final String CHECK = "Check";

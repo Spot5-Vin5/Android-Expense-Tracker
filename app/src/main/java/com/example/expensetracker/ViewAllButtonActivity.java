@@ -26,6 +26,7 @@ import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +52,8 @@ public class ViewAllButtonActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
+        // Initialize variables in SharedVariables
+        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_button);
@@ -73,7 +76,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
                 showPayments();
             }
         });
-        loadData();
+        loadData(sharedVariables);
 
         // By default, show Transactions
         showTransactions();
@@ -122,12 +125,12 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentsAdapter);
     }
 
-    private void loadData() {
+    private void loadData(SingleTonSharedVariables sharedVariables) {
 
-        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>());
+        readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
-        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE);
+        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
 
       /*  readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();

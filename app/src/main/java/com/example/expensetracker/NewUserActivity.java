@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.expensetracker.utilities.SingleTonSharedVariables;
+
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -40,9 +42,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class NewUserActivity extends AppCompatActivity {
-    public static String basePath, fileName, filePath;
-    public static String email;
-    private EditText editTextSignupName, editTextSignupEmail, editTextSignupPassword, editTextSignupConfirmPassword;
+     private EditText editTextSignupName, editTextSignupEmail, editTextSignupPassword, editTextSignupConfirmPassword;
     private Button buttonAccountCreate;
     private Context context = this;
 
@@ -62,27 +62,34 @@ public class NewUserActivity extends AppCompatActivity {
         buttonAccountCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createExcelFile();
+
+                // Initialize variables in SharedVariables
+                SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+                createExcelFile(sharedVariables);
                 startActivity(new Intent(NewUserActivity.this, AppHomeActivity.class));
             }
         });
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            createExcelFile();
+
+            // Initialize variables in SharedVariables
+            SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+            createExcelFile(sharedVariables);
         } else {
-
             Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
-
         }
     }
 
-    private void createExcelFile() {
+    private void createExcelFile(SingleTonSharedVariables sharedVariables) {
         System.out.println("inside NewUserActivity class, inside createExcelFile(), after buttonCreate button clicked: ===started=== ");
-        email = editTextSignupEmail.getText().toString();
-        if (!email.contains("@gmail.com")) {
+        //email = editTextSignupEmail.getText().toString();
+        sharedVariables.setEmail(editTextSignupEmail.getText().toString());
+        //if (!email.contains("@gmail.com")) {
+        if (!sharedVariables.getEmail().contains("@gmail.com")) {
             Toast.makeText(this, "Enter valid gmail id", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -94,14 +101,15 @@ public class NewUserActivity extends AppCompatActivity {
             return;
         }
 
-       /* String[] s = email.split("@", 2);
-        String s1 = s[0];
-        fileName = s1 + "_expenses.xlsx";*/
-        fileName = email+ "_expensesFile.xlsx"; // check this if it works
-        basePath = getExternalFilesDir(null).getAbsolutePath(); // App-specific external directory
-        filePath = basePath + "/Expense Tracker App/" + fileName;
+        //fileName = email+ "_expensesFile.xlsx"; // check this if it works
+        sharedVariables.setFileName(sharedVariables.getEmail() + "_expensesFile.xlsx");
+        //basePath = getExternalFilesDir(null).getAbsolutePath(); // App-specific external directory
+        sharedVariables.setBasePath(getExternalFilesDir(null).getAbsolutePath());
+        // filePath = basePath + "/Expense Tracker App/" + fileName;
+        sharedVariables.setFilePath(sharedVariables.getBasePath() + "/Expense Tracker App/" + sharedVariables.getFileName());
 
-        File file = new File(filePath);
+        //File file = new File(filePath);
+        File file = new File(sharedVariables.getFilePath());
 
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
@@ -210,7 +218,8 @@ public class NewUserActivity extends AppCompatActivity {
             budgetSheet.createRow(0).createCell(0).setCellValue(BUDGET);
             budgetSheet.createRow(1).createCell(0).setCellValue(LIMIT);
 
-            Toast.makeText(this, filePath, Toast.LENGTH_SHORT).show();
+                                                    // filePath
+            Toast.makeText(this, sharedVariables.getFilePath(), Toast.LENGTH_SHORT).show();
             // Toast.makeText(this, "Profile created successfully", Toast.LENGTH_SHORT).show();
             try (FileOutputStream outputStream = new FileOutputStream(file)) {
                 workbook.write(outputStream);
