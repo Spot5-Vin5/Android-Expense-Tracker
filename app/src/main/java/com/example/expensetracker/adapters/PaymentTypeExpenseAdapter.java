@@ -13,7 +13,6 @@ import com.example.expensetracker.models.PaymentsModel;
 import java.util.List;
 
 
-
 public class PaymentTypeExpenseAdapter extends BaseAdapter {
     private Context context;
     private List<PaymentsModel> expensePaymentsList;

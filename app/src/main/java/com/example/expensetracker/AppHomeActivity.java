@@ -4,7 +4,9 @@ import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
+import static com.example.expensetracker.utilities.HeadingConstants.NAME;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,8 +35,10 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class AppHomeActivity extends AppCompatActivity {
@@ -51,6 +56,8 @@ public class AppHomeActivity extends AppCompatActivity {
     private int totalMonthExpense = 0;
     private HashMap<String, Integer> eachCategoryAmount = new HashMap<>();
     private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
+    private TextView greetingTextView;
+    private TextView homeBalance;
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -74,6 +81,8 @@ public class AppHomeActivity extends AppCompatActivity {
         // Initialize UI elements
         initializeUI();
         System.out.println("inside AppHomeActivity class,inside 3 onCreate(), before loadData()");
+        // Update greeting based on the time
+        updateGreeting(sharedVariables);
         // Load data
         loadData(sharedVariables);
         System.out.println("inside AppHomeActivity class,inside 4 onCreate(), before setupListView()");
@@ -85,11 +94,15 @@ public class AppHomeActivity extends AppCompatActivity {
         setupPieChart();
         System.out.println("inside AppHomeActivity class,inside 6 onCreate(), before setupPieChart(), loadPieChartData() ");
         loadPieChartData();
+        //Set up homeBalance
+        loadHomeBalance();
         System.out.println("inside AppHomeActivity class, 7 onCreate(), ===ended===");
     }
 
     private void initializeUI() {
         System.out.println("inside AppHomeActivity class, inside initializeUI () 1 of 3");
+        greetingTextView = findViewById(R.id.greeting);
+        homeBalance = findViewById(R.id.homeBalance);
         profileButton = findViewById(R.id.profile);
         addExpenseButton = findViewById(R.id.addExpense);
         appHomeMenuButton = findViewById(R.id.appHomeMenu);
@@ -110,6 +123,30 @@ public class AppHomeActivity extends AppCompatActivity {
             viewAllButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ViewAllButtonActivity.class)));
         }
         System.out.println("inside AppHomeActivity class, inside initializeUI () 3 of 3");
+    }
+
+    private void updateGreeting(SingleTonSharedVariables sharedVariables) {
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () started ");
+        Calendar calendar = Calendar.getInstance();
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () calendar: "+calendar);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () hour: "+hour);
+        var scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY,  sharedVariables);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () scripts: "+scripts);
+        String greeting;
+        if (hour >= 5 && hour < 12) {
+            greeting = "Good Morning,"+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+        } else if (hour >= 12 && hour < 16) {
+            greeting = "Good Afternoon, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+        } else if (hour >= 16 && hour < 20) {
+            greeting = "Good Evening, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+        } else {
+            greeting = "Good Night, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+        }
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () greeting: "+greeting);
+        // Set the greeting in the TextView
+        greetingTextView.setText(greeting);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () ended");
     }
 
 
@@ -275,4 +312,12 @@ public class AppHomeActivity extends AppCompatActivity {
         pieChart.invalidate(); // Refresh the chart to apply changes
         System.out.println("inside AppHomeActivity class, inside loadPieChartData () 5, ==ended==");
     }
+
+    private void loadHomeBalance() {
+        System.out.println("inside AppHomeActivity class, inside loadhomeBalance () 1, ==Started==");
+        homeBalance.setText(" Current Month Balance: ₹" + totalMonthExpense);
+        System.out.println("inside AppHomeActivity class, inside loadhomeBalance () totalMonthExpense: " + totalMonthExpense);
+        System.out.println("inside AppHomeActivity class, inside loadhomeBalance () 2, ==ended==");
+    }
+
 }

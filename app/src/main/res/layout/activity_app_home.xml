@@ -3,9 +3,8 @@
     android:id="@+id/appHomeMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="20dp">
     <!-- android:background="#F3EDE5"> -->
-
 
     <!-- Section 1: HOME Text View -->
     <TextView
@@ -14,10 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="5dp"
         android:text="Home"
-        android:textColor="#000"
         android:textSize="24sp" />
+    <!--android:textColor="#000"-->
+
 
     <!-- Section 2: Top Section -->
     <LinearLayout
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/home_text"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical">
 
         <TextView
@@ -34,30 +34,33 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:text="Good Morning, User!"
-            android:textColor="#000"
             android:textSize="20sp" />
+            <!--android:textColor="#000"-->
+
 
         <TextView
-            android:id="@+id/balance"
+            android:id="@+id/homeBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current Balance: $5,320"
-            android:textColor="#000"
             android:textSize="18sp" />
+            <!--android:textColor="#000"-->
+
 
         <Button
             android:id="@+id/view_all_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="0dp"
             android:background="?android:attr/selectableItemBackground"
             android:text="View All"
             android:textColor="#0000EE"
-            android:textSize="14sp" />
-    </LinearLayout>
+            android:padding="0dp"
+            android:textSize="15sp" />
 
+    </LinearLayout>
     <!-- Section 3: Expense Overview Text View -->
     <TextView
         android:layout_width="wrap_content"
@@ -67,26 +70,17 @@
         android:drawableEnd="@drawable/ic_expand_more"
         android:drawablePadding="8dp"
         android:text="EXPENSE OVERVIEW"
-        android:textColor="#000"
         android:textSize="12sp" />
+        <!--android:textColor="#000"-->
 
-    <!-- Section 4: Pie Chart -->
-  <!--  <FrameLayout
-        android:id="@+id/pie_chart_container"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@id/top_section"
-        android:layout_marginBottom="16dp">
 
-        &lt;!&ndash; Here you can add your PieChart view dynamically or use a library &ndash;&gt;
-    </FrameLayout>-->
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart_container"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:layout_centerInParent="true"
         android:layout_below="@id/top_section"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="5dp" />
 
     <!-- Section 5: Dynamic ListView for Categories -->
     <LinearLayout
@@ -101,7 +95,7 @@
             android:id="@+id/home_category_model_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="8dp"
+            android:dividerHeight="1dp"
             android:scrollbars="vertical" />
     </LinearLayout>
 
@@ -111,36 +105,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#D1C4E9"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:padding="5dp"
         android:weightSum="3">
+        <!--android:background="#D1C4E9"-->
 
         <Button
             android:id="@+id/appHomeMenu"
-            android:layout_width="0dp"
+            android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/purple_200"
-            android:text="Menu"
-            android:textColor="#fff" />
+            android:text="Menu" />
+            <!--android:background="@color/purple_200"
+            android:textColor="#fff" -->
 
         <Button
             android:id="@+id/addExpense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/purple_200"
-            android:text="Add"
-            android:textColor="#fff" />
+            android:text="Add"  />
+            <!--android:background="@color/purple_200"
+            android:textColor="#fff"-->
 
         <Button
             android:id="@+id/profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/purple_200"
-            android:text="Profile"
-            android:textColor="#fff" />
+            android:text="Profile" />
+            <!--android:background="@color/purple_200"
+            android:textColor="#fff" -->
     </LinearLayout>
 </RelativeLayout>
