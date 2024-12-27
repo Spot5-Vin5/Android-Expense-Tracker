@@ -112,8 +112,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         return typeList;
     }
 
-    public void readSubTypesFromSheet(Row row, String
-            typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
+    public void readSubTypesFromSheet(Row row, String typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
 
         ArrayList<String> subCatList = new ArrayList<String>();
         int subCatColumnIndex = 1;//Subcat starts at index1
@@ -366,8 +365,7 @@ public class SingleTonExpenseTrackerExcelUtil {
         return expenseDataRowMapList;
     }
 
-    public ArrayList<String> readAllSubPaymentsFromExcel
-            (HashMap<String, ArrayList<String>> paymentToSubPaymentMap, String className) {
+    public ArrayList<String> readAllSubPaymentsFromExcel(HashMap<String, ArrayList<String>> paymentToSubPaymentMap, String className) {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line1 ==started==" + className);
         ArrayList<String> readAllSubPaymentsFromExcel = new ArrayList<>();
         for (Map.Entry<String, ArrayList<String>> entry : paymentToSubPaymentMap.entrySet()) {
