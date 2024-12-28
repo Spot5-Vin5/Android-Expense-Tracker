@@ -11,6 +11,8 @@ import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONI
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SingleTonExpenseTrackerExcelUtil {
     private static volatile SingleTonExpenseTrackerExcelUtil instance = null;
@@ -406,5 +410,48 @@ public class SingleTonExpenseTrackerExcelUtil {
         }
         return "Expense Updated Successfully";
     }
-}
 
+    public void readTypesListandSubTypesMapFromExcelUtilAsync(String sheetName, String excelFilePath, Callback<HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>>> callback) {
+        System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): started");
+        ExecutorService executor = Executors.newSingleThreadExecutor(); // Background thread
+        executor.submit(() -> {
+            try {
+                System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop started");
+                HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>();
+                ArrayList<String> typeList = new ArrayList<>();
+                HashMap<String, ArrayList<String>> typesToSubtypesMap = new HashMap<>();
+
+                try (FileInputStream fileInputStream = new FileInputStream(new File(excelFilePath)); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+                    System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop started: try loop");
+                    Sheet sheet = workbook.getSheet(sheetName);
+                    if (sheet == null) {
+                        throw new IOException("Sheet not found: " + sheetName);
+                    }
+                    int columnIndex = 0; // catType column
+                    for (Row row : sheet) {
+                        Cell cell = row.getCell(columnIndex, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                        if (cell != null && (cell.getCellType() == CellType.STRING || cell.getCellType() != CellType.BLANK)) {
+                            String typeFromSheet = cell.getStringCellValue();
+                            if (!typeFromSheet.contains(sheetName) && !typeFromSheet.contains("Type")) {
+                                typeList.add(typeFromSheet); // Add category to the list
+                                readSubTypesFromSheet(row, typeFromSheet, typesToSubtypesMap);
+                            }
+                        }
+                    }
+                    typesListAndSubTypesMap.put(typeList, typesToSubtypesMap);
+                    System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop : typesListAndSubTypesMap: " + typesListAndSubTypesMap);
+                }
+                System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop : WHOLE typesListAndSubTypesMap: " + typesListAndSubTypesMap);
+                System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop : before 1st Handler");
+                // Return result on the main thread
+                new Handler(Looper.getMainLooper()).post(() -> callback.onComplete(typesListAndSubTypesMap));
+                System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop : before 2nd Handler");
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFinished());
+                System.out.println("inside SingleTonExpenseTrackerExcelUtil : readTypesListandSubTypesMapFromExcelUtilAsync(): try loop ended");
+            } catch (Exception e) {
+                // Return error on the main thread
+                new Handler(Looper.getMainLooper()).post(() -> callback.onError(e));
+            }
+        });
+    }
+}

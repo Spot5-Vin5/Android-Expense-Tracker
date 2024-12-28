@@ -50,6 +50,8 @@ _Upcoming Features_
  9. Auto logout from app after 5min if user don't logout.
  10. Default profile picture.
  11. Check delete button functionality in excel file row.
+ 12. Credit card details storage.
+ 13. App icon in Toast message.
 ```
 _Git Commands_
 ```

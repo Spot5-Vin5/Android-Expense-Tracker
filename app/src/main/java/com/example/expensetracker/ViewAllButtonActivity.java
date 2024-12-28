@@ -15,6 +15,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONI
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,12 +26,14 @@ import com.example.expensetracker.adapters.PaymentTypeExpenseAdapter;
 import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
+import com.example.expensetracker.utilities.Callback;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
 import com.example.expensetracker.utilities.SingleTonSharedVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class ViewAllButtonActivity extends AppCompatActivity {
 
@@ -46,10 +49,13 @@ public class ViewAllButtonActivity extends AppCompatActivity {
     private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
     private HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil;
     private ArrayList<String> readAllPaymentTypeListFromSheet;
+    private boolean isOnCompleteExecuted = false; // Initialize the flag as false
+    private CountDownLatch latch = new CountDownLatch(1); // Initialize with count 1
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () ");
 
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
@@ -76,6 +82,10 @@ public class ViewAllButtonActivity extends AppCompatActivity {
                 showPayments();
             }
         });
+
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () before initializeMap() called");
+        initializeMap(sharedVariables);
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () before loadData() called");
         loadData(sharedVariables);
 
         // By default, show Transactions
@@ -83,9 +93,9 @@ public class ViewAllButtonActivity extends AppCompatActivity {
 
         // Initialize the transactionlist and paymentslist with sample data
         List<TransactionModel> transactions = new ArrayList<>();
-        for(HashMap<String, String> expenseRowMap: readExpenseDataRowMapListFromExcel){
+        for (HashMap<String, String> expenseRowMap : readExpenseDataRowMapListFromExcel) {
             System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
-            transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID),expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
+            transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID), expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
         }
 
         /*transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
@@ -125,23 +135,118 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentsAdapter);
     }
 
-    private void loadData(SingleTonSharedVariables sharedVariables) {
+    private void initializeMap(SingleTonSharedVariables sharedVariables) {
+        System.out.println("inside ViewAllButtonActivity class, inside initializeMap(): started");
 
+        singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtilAsync(PAYMENT_TYPE, sharedVariables.getFilePath(), new Callback<HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>>>() {
+            @Override
+            public void onComplete(HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> result) {
+                // Set the flag to true
+                isOnCompleteExecuted = true;
+                // Update the UI with the result
+                Log.i("ExcelData", "Data loaded successfully: " + result);
+              /*  paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+                System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);*/
+                // Assign the result to the global variable
+                readTypesListandSubTypesMapFromExcelUtil = result;
+                // Signal that the map is initialized
+
+                Log.i("ExcelData", "Data loaded successfully: result: " + result);
+                result.forEach((key, value) -> {
+                    System.out.println("Map contents: " + result);
+
+                    /*System.out.println("\tKey: " + key);
+                    System.out.println("\tValue:");
+                    value.forEach((subKey, subValue) -> {
+                        System.out.println("\t\tSubKey: " + subKey + ", SubValue: " + subValue);
+                    });*/
+                });
+                // Release the latch
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // Handle error
+                Log.i("ExcelError", "Error loading data: ", e);
+                latch.countDown(); // Ensure the latch is released even on error
+            }
+
+            @Override
+            public void onFinished() {
+                Log.i("Callback", "All operations in onComplete have finished.");
+            }
+        });
+        System.out.println("inside ViewAllButtonActivity class, inside initializeMap() readTypesListandSubTypesMapFromExcelUtil: "+readTypesListandSubTypesMapFromExcelUtil);
+        System.out.println("inside ViewAllButtonActivity class, inside initializeMap(): ended");
+    }
+
+    /*private void loadData(SingleTonSharedVariables sharedVariables) {
+        System.out.println("inside ViewAllButtonActivity class,  loadData() : started");
+        try {
+            System.out.println("inside ViewAllButtonActivity class,  loadData() try loop : started");
+            latch.await(); // Blocks until latch.countDown() is called
+            System.out.println("inside ViewAllButtonActivity class,  loadData() try loop : ended");
+        } catch (InterruptedException e) {
+            System.out.println("inside ViewAllButtonActivity class,  loadData() catch loop : started");
+            e.printStackTrace();
+            System.out.println("inside ViewAllButtonActivity class,  loadData() catch loop : ended");
+        }
+        System.out.println("inside ViewAllButtonActivity class,  loadData() part2");
         readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
-        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
-        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
+      *//*  readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);*//*
 
-      /*  readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();
-        System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, loadData" + readAllPaymentTypeListFromSheet);*/
 
-        paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+        // Later in your code, check the flag
+        //if (isOnCompleteExecuted) {
+        if (readTypesListandSubTypesMapFromExcelUtil != null) {
+            Log.i("Check", "onComplete has finished executing.");
+            paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
+            System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);
+
+            readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+            System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
+        } else {
+            Log.i("Check", "onComplete is not yet executed.");
+        }
+        *//*paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
         System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);
 
         readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
-        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
+        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);*//*
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () before loadData() : ended");
+    }*/
 
+    private void loadData(SingleTonSharedVariables sharedVariables) {
+        System.out.println("inside ViewAllButtonActivity class,  loadData() : started");
+        new Thread(() -> {
+            try {
+                System.out.println("inside ViewAllButtonActivity class,  loadData() try loop : started");
+                latch.await(); // Blocks until latch.countDown() is called
+                System.out.println("inside ViewAllButtonActivity class,  loadData() try loop : ended");
+                // Perform the data loading in the main thread
+                runOnUiThread(() -> {
+                    System.out.println("inside ViewAllButtonActivity class,  loadData() part2");
+                    readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
+                    System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
+                    if (readTypesListandSubTypesMapFromExcelUtil != null) {
+                        HashMap<String, ArrayList<String>> paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());
+                        System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);
+                        readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+                        System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
+                    } else {
+                        Log.e("LoadData", "Map is still null!");
+                    }
+                });
+            } catch (InterruptedException e) {
+                System.out.println("inside ViewAllButtonActivity class,  loadData() catch loop : started");
+                e.printStackTrace();
+                System.out.println("inside ViewAllButtonActivity class,  loadData() catch loop : ended");
+            }
+        }).start();
     }
 
     private void calculateEachPaymentTypeAmount() {
@@ -194,6 +299,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         btnTransactions.setBackgroundResource(R.drawable.button_selector_transactions); // Selected state
         btnPayments.setBackgroundResource(R.drawable.button_selector_payments); // Unselected state
     }
+
     private void showPayments() {
         transactionsList.setVisibility(View.GONE);
         paymentsList.setVisibility(View.VISIBLE);
