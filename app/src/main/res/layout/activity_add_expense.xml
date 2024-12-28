@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Amount ($)"
+            android:text="Amount (₹)"
             android:textSize="18sp"/>
 
         <!-- EditText for the Amount input -->

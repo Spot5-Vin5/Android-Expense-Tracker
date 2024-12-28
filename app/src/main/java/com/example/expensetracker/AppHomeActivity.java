@@ -3,6 +3,7 @@ package com.example.expensetracker;
 import static com.example.expensetracker.utilities.HeadingConstants.AMOUNT;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
+import static com.example.expensetracker.utilities.HeadingConstants.DATE;
 import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
 import static com.example.expensetracker.utilities.HeadingConstants.NAME;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
@@ -34,12 +35,18 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AppHomeActivity extends AppCompatActivity {
     private SingleTonExpenseTrackerExcelUtil singleTonExpenseTrackerExcelUtil;
@@ -58,6 +65,7 @@ public class AppHomeActivity extends AppCompatActivity {
     private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
     private TextView greetingTextView;
     private TextView homeBalance;
+    private List<String> sortedMonthData;
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -86,7 +94,9 @@ public class AppHomeActivity extends AppCompatActivity {
         // Load data
         loadData(sharedVariables);
         System.out.println("inside AppHomeActivity class,inside 4 onCreate(), before setupListView()");
-        //System.out.println("inside AppHomeActivity class, inside 4 onCreate(), starting1:, "+eachPaymentTypeAmount);
+
+        getAllMonthesofTransaction(readExpenseDataRowMapListFromExcel);
+
         // Set up ListView
         setupListView(eachCategoryAmount);
         System.out.println("inside AppHomeActivity class,inside 5 onCreate(), before setupPieChart(), setupPieChart() ");
@@ -128,22 +138,22 @@ public class AppHomeActivity extends AppCompatActivity {
     private void updateGreeting(SingleTonSharedVariables sharedVariables) {
         System.out.println("inside AppHomeActivity class, inside updateGreeting () started ");
         Calendar calendar = Calendar.getInstance();
-        System.out.println("inside AppHomeActivity class, inside updateGreeting () calendar: "+calendar);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () calendar: " + calendar);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        System.out.println("inside AppHomeActivity class, inside updateGreeting () hour: "+hour);
-        var scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY,  sharedVariables);
-        System.out.println("inside AppHomeActivity class, inside updateGreeting () scripts: "+scripts);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () hour: " + hour);
+        var scripts = singleTonExpenseTrackerExcelUtil.readProfileFromExcel(PROFILE_ACTIVITY, sharedVariables);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () scripts: " + scripts);
         String greeting;
         if (hour >= 5 && hour < 12) {
-            greeting = "Good Morning,"+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+            greeting = "Good Morning," + scripts.get(NAME).toUpperCase(Locale.ROOT) + "!";
         } else if (hour >= 12 && hour < 16) {
-            greeting = "Good Afternoon, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+            greeting = "Good Afternoon, " + scripts.get(NAME).toUpperCase(Locale.ROOT) + "!";
         } else if (hour >= 16 && hour < 20) {
-            greeting = "Good Evening, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+            greeting = "Good Evening, " + scripts.get(NAME).toUpperCase(Locale.ROOT) + "!";
         } else {
-            greeting = "Good Night, "+scripts.get(NAME).toUpperCase(Locale.ROOT)+"!";
+            greeting = "Good Night, " + scripts.get(NAME).toUpperCase(Locale.ROOT) + "!";
         }
-        System.out.println("inside AppHomeActivity class, inside updateGreeting () greeting: "+greeting);
+        System.out.println("inside AppHomeActivity class, inside updateGreeting () greeting: " + greeting);
         // Set the greeting in the TextView
         greetingTextView.setText(greeting);
         System.out.println("inside AppHomeActivity class, inside updateGreeting () ended");
@@ -176,6 +186,85 @@ public class AppHomeActivity extends AppCompatActivity {
         calculateEachCategoryAmount();
 
         System.out.println("inside AppHomeActivity class, inside loadData () 8 of 8, ==ended==");
+    }
+
+
+    private void getAllMonthesofTransaction(ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel) {
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction ()");
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () readExpenseDataRowMapListFromExcel: " + readExpenseDataRowMapListFromExcel);
+        // Define the flexible date formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () formatter: " + formatter);
+
+        Set<String> uniqueMonths = readExpenseDataRowMapListFromExcel.stream()
+                .map(rowMap -> {
+                    String date = rowMap.get(DATE); // Get the DATE value
+                    System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date: " + date);
+                    if (date != null) {
+                        System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date: " + date);
+                        // Parse the date only if it's not null
+                        try {
+                            LocalDate parsedDate = LocalDate.parse(date, formatter);
+                            // Extract day, month, and year
+                            int day = parsedDate.getDayOfMonth();
+                            int month = parsedDate.getMonthValue();
+                            int year = parsedDate.getYear();
+
+                            // Get month name
+                            String monthName = parsedDate.getMonth().name(); // This will be in uppercase (e.g., JANUARY)
+                            System.out.println("Parsed Date: Day = " + day + ", Month = " + month + " (" + monthName + "), Year = " + year);
+
+                            return monthName + " " + year;  // Return "Month Year" format
+                        } catch (Exception e) {
+                            System.out.println("Error parsing date: " + date);
+                            return null;  // Return null if the date format is invalid (optional)
+                        }
+                    } else {
+                        return null;  // Return null if the date is null
+                    }
+                })
+                .filter(Objects::nonNull)  // Remove null entries
+                .collect(Collectors.toSet());  // Collect into a Set
+
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () uniqueMonthes Set: " + uniqueMonths);
+        // Define the formatter for "Month Year" format, ensure it works with uppercase month names
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH);
+
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () monthFormatter: " + monthFormatter);
+
+        // Sort the months in chronological order (January to December)
+        List<String> sortedMonths = uniqueMonths.stream()
+                .map(entry -> {
+                    try {
+                        // Normalize the month-year string to title case for better compatibility
+                        String normalizedEntry = normalizeMonthYear(entry);
+
+                        // Parse the "Month Year" string into YearMonth
+                        return YearMonth.parse(normalizedEntry, monthFormatter);
+                    } catch (Exception e) {
+                        // Handle parsing errors
+                        System.out.println("Error parsing date: " + entry);
+                        return null;  // Return null if parsing fails
+                    }
+                })
+                .filter(Objects::nonNull)  // Remove null entries caused by parse errors
+                .sorted() // Sort chronologically by YearMonth
+                .map(yearMonth -> yearMonth.format(monthFormatter)) // Convert back to "Month Year"
+                .collect(Collectors.toList()); // Collect into a List
+        // Print the sorted data
+        System.out.println("sortedMonthData: " + sortedMonths);
+        System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () ==ended==");
+    }
+
+    private String normalizeMonthYear(String entry) {
+        String[] parts = entry.split(" ");
+        if (parts.length == 2) {
+            // Normalize the month part (capitalize the first letter and make the rest lowercase)
+            String month = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1).toLowerCase();
+            System.out.println("inside AppHomeActivity class, inside normalizeMonthYear (): " + month + " " + parts[1]);
+            return month + " " + parts[1]; // Reconstruct the string
+        }
+        return entry; // Return as is if format is invalid
     }
 
     private void setupListView(HashMap<String, Integer> eachCategoryAmount) {
