@@ -14,9 +14,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -45,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,7 +69,8 @@ public class AppHomeActivity extends AppCompatActivity {
     private HashMap<String, Integer> eachPaymentTypeAmount = new HashMap<>();
     private TextView greetingTextView;
     private TextView homeBalance;
-    private List<String> sortedMonthData;
+    private Spinner homePageMonthSelector;
+    private List<String> sortedAllUniqueMonths;
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -95,7 +100,11 @@ public class AppHomeActivity extends AppCompatActivity {
         loadData(sharedVariables);
         System.out.println("inside AppHomeActivity class,inside 4 onCreate(), before setupListView()");
 
-        getAllMonthesofTransaction(readExpenseDataRowMapListFromExcel);
+        // Load Unique Months
+        getAllUniqueMonthsFromAllTransactions(readExpenseDataRowMapListFromExcel);
+        System.out.println("onCreate() : sortedMonthData: " + sortedAllUniqueMonths);
+        // Set up HomePageMonthSelector
+        configureSpinners();
 
         // Set up ListView
         setupListView(eachCategoryAmount);
@@ -109,11 +118,35 @@ public class AppHomeActivity extends AppCompatActivity {
         System.out.println("inside AppHomeActivity class, 7 onCreate(), ===ended===");
     }
 
+    private void configureSpinners() {
+        System.out.println("configureSpinners() : sortedMonthData: " + sortedAllUniqueMonths);
+        setUpSpinner(homePageMonthSelector, sortedAllUniqueMonths);
+        homePageMonthSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedHomePageMonth = (String) parent.getItemAtPosition(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void setUpSpinner(Spinner homePageMonthSelector, List<String> sortedAllUniqueMonths) {
+        if (sortedAllUniqueMonths == null) {
+            return;
+        }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortedAllUniqueMonths);
+            homePageMonthSelector.setAdapter(adapter);
+
+    }
+
     private void initializeUI() {
         System.out.println("inside AppHomeActivity class, inside initializeUI () 1 of 3");
         greetingTextView = findViewById(R.id.greeting);
         homeBalance = findViewById(R.id.homeBalance);
         profileButton = findViewById(R.id.profile);
+        homePageMonthSelector = findViewById(R.id.homePageMonthSelector);
         addExpenseButton = findViewById(R.id.addExpense);
         appHomeMenuButton = findViewById(R.id.appHomeMenu);
         pieChart = findViewById(R.id.pie_chart_container);
@@ -189,7 +222,7 @@ public class AppHomeActivity extends AppCompatActivity {
     }
 
 
-    private void getAllMonthesofTransaction(ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel) {
+    private void getAllUniqueMonthsFromAllTransactions(ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel) {
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction ()");
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () readExpenseDataRowMapListFromExcel: " + readExpenseDataRowMapListFromExcel);
         // Define the flexible date formatter
@@ -200,7 +233,9 @@ public class AppHomeActivity extends AppCompatActivity {
                 .map(rowMap -> {
                     String date = rowMap.get(DATE); // Get the DATE value
                     System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date: " + date);
-                    if (date != null) {
+                    Optional<String> optionalStr = Optional.ofNullable(date); // using java 8 optional class
+                    // if (date != null) { // Check if date is not null-> if (Objects.nonNull(str)) using  java.util.Objects class in Java 8
+                    if (optionalStr.isPresent()) {
                         System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date: " + date);
                         // Parse the date only if it's not null
                         try {
@@ -233,7 +268,7 @@ public class AppHomeActivity extends AppCompatActivity {
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () monthFormatter: " + monthFormatter);
 
         // Sort the months in chronological order (January to December)
-        List<String> sortedMonths = uniqueMonths.stream()
+        sortedAllUniqueMonths = uniqueMonths.stream()
                 .map(entry -> {
                     try {
                         // Normalize the month-year string to title case for better compatibility
@@ -252,7 +287,7 @@ public class AppHomeActivity extends AppCompatActivity {
                 .map(yearMonth -> yearMonth.format(monthFormatter)) // Convert back to "Month Year"
                 .collect(Collectors.toList()); // Collect into a List
         // Print the sorted data
-        System.out.println("sortedMonthData: " + sortedMonths);
+        System.out.println("sortedMonthData: " + sortedAllUniqueMonths);
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () ==ended==");
     }
 

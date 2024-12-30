@@ -1,25 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/appHomeMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
-    <!-- android:background="#F3EDE5"> -->
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
 
-    <!-- Section 1: HOME Text View -->
     <TextView
         android:id="@+id/home_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
         android:text="Home"
         android:textSize="24sp" />
-    <!--android:textColor="#000"-->
 
-
-    <!-- Section 2: Top Section -->
     <LinearLayout
         android:id="@+id/top_section"
         android:layout_width="match_parent"
@@ -35,8 +29,6 @@
             android:layout_marginBottom="4dp"
             android:text="Good Morning, User!"
             android:textSize="20sp" />
-            <!--android:textColor="#000"-->
-
 
         <TextView
             android:id="@+id/homeBalance"
@@ -44,89 +36,76 @@
             android:layout_height="wrap_content"
             android:text="Current Balance: $5,320"
             android:textSize="18sp" />
-            <!--android:textColor="#000"-->
 
+        <LinearLayout
+            android:id="@+id/top_section_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-        <Button
-            android:id="@+id/view_all_button"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            android:layout_marginTop="0dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:text="View All"
-            android:textColor="#0000EE"
-            android:padding="0dp"
-            android:textSize="15sp" />
+            <Spinner
+                android:id="@+id/homePageMonthSelector"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:textSize="12sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="0.5" />
+
+            <Button
+                android:id="@+id/view_all_button"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="0dp"
+                android:text="View All"
+                android:textColor="#0000EE"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
-    <!-- Section 3: Expense Overview Text View -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/top_section"
-        android:layout_marginBottom="16dp"
-        android:drawableEnd="@drawable/ic_expand_more"
-        android:drawablePadding="8dp"
-        android:text="EXPENSE OVERVIEW"
-        android:textSize="12sp" />
-        <!--android:textColor="#000"-->
-
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart_container"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:layout_centerInParent="true"
         android:layout_below="@id/top_section"
         android:layout_marginBottom="5dp" />
 
-    <!-- Section 5: Dynamic ListView for Categories -->
-    <LinearLayout
+    <ListView
+        android:id="@+id/home_category_model_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@id/bottom_navigation"
-        android:layout_below="@id/pie_chart_container"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_below="@id/pie_chart_container"
+        android:layout_above="@id/bottom_navigation"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical" />
 
-        <ListView
-            android:id="@+id/home_category_model_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:dividerHeight="1dp"
-            android:scrollbars="vertical" />
-    </LinearLayout>
-
-    <!-- Bottom Navigation -->
     <LinearLayout
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:padding="5dp"
-        android:weightSum="3">
-        <!--android:background="#D1C4E9"-->
+        android:padding="5dp">
 
         <Button
             android:id="@+id/appHomeMenu"
-            android:layout_width="1dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Menu" />
-            <!--android:background="@color/purple_200"
-            android:textColor="#fff" -->
 
         <Button
             android:id="@+id/addExpense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add"  />
-            <!--android:background="@color/purple_200"
-            android:textColor="#fff"-->
+            android:text="Add" />
 
         <Button
             android:id="@+id/profile"
@@ -134,7 +113,5 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Profile" />
-            <!--android:background="@color/purple_200"
-            android:textColor="#fff" -->
     </LinearLayout>
 </RelativeLayout>
