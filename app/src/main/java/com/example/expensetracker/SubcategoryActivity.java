@@ -17,7 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class SubcategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
         loadDataFromSheet(sharedVariables);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subcategory);
@@ -53,7 +53,7 @@ public class SubcategoryActivity extends AppCompatActivity {
         //  setupAdapter(); // testing place
     }
 
-    private void loadDataFromSheet(SingleTonSharedVariables sharedVariables) {
+    private void loadDataFromSheet(SingleTonSharedLoginVariables sharedVariables) {
         readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES, sharedVariables.getFilePath() );
         System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil);
 
@@ -110,7 +110,7 @@ public class SubcategoryActivity extends AppCompatActivity {
         subcategoryListView.setAdapter(subcategoryAdapter);
     }
 
-    private void showAddSubcategoryDialog(String categoryName, SingleTonSharedVariables sharedVariables) {
+    private void showAddSubcategoryDialog(String categoryName, SingleTonSharedLoginVariables sharedVariables) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_subcategory_dialog, null);
         builder.setView(customLayout);

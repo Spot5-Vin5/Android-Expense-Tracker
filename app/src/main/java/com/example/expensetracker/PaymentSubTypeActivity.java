@@ -1,6 +1,5 @@
 package com.example.expensetracker;
 
-import static com.example.expensetracker.utilities.HeadingConstants.CATEGORIES;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
 
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
         loadDataFromSheet(sharedVariables);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_sub_type);
@@ -56,7 +55,7 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
         //  setupAdapter(); // testing place
     }
 
-    private void loadDataFromSheet(SingleTonSharedVariables sharedVariables) {
+    private void loadDataFromSheet(SingleTonSharedLoginVariables sharedVariables) {
         readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
 
@@ -113,7 +112,7 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
         subpaymentListView.setAdapter(subPaymentAdapter);
     }
 
-    private void showAddSubcategoryDialog(String paymentName, SingleTonSharedVariables sharedVariables) {
+    private void showAddSubcategoryDialog(String paymentName, SingleTonSharedLoginVariables sharedVariables) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_payment_sub_type_dialog, null);
         builder.setView(customLayout);

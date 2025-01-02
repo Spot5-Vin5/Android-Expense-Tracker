@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +31,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -66,7 +65,7 @@ public class NewUserActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 // Initialize variables in SharedVariables
-                SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+                SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
                 if (!isEmailInDatabase(sharedVariables)) {
                     System.out.println("New Account Creating");
                     createExcelFile(sharedVariables);
@@ -88,7 +87,7 @@ public class NewUserActivity extends AppCompatActivity {
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 /*
             // Initialize variables in SharedVariables
-            SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+            SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
             if (!isEmailInDatabase(sharedVariables)) {
                 createExcelFile(sharedVariables);
             }*/
@@ -98,7 +97,7 @@ public class NewUserActivity extends AppCompatActivity {
         }
     }
 
-    private void createExcelFile(SingleTonSharedVariables sharedVariables) {
+    private void createExcelFile(SingleTonSharedLoginVariables sharedVariables) {
         System.out.println("inside NewUserActivity class, inside createExcelFile(), after buttonCreate button clicked: ===started=== ");
         //email = editTextSignupEmail.getText().toString();
         sharedVariables.setEmail(editTextSignupEmail.getText().toString());
@@ -170,6 +169,15 @@ public class NewUserActivity extends AppCompatActivity {
             expense.getRow(4).createCell(6).setCellValue("SBI BPCL");
             expense.getRow(4).createCell(7).setCellValue("Goa");
 
+            expense.createRow(5).createCell(0).setCellValue(UUID.randomUUID().toString());
+            expense.getRow(5).createCell(1).setCellValue("01-01-2025");
+            expense.getRow(5).createCell(2).setCellValue("3000");
+            expense.getRow(5).createCell(3).setCellValue("Fuel");
+            expense.getRow(5).createCell(4).setCellValue("Diesel");
+            expense.getRow(5).createCell(5).setCellValue("Credit Card");
+            expense.getRow(5).createCell(6).setCellValue("SBI BPCL");
+            expense.getRow(5).createCell(7).setCellValue("KPHB");
+
            /* expense.createRow(4).createCell(0).setCellValue("28-04-2024");
             expense.getRow(4).createCell(1).setCellValue("1000");
             expense.getRow(4).createCell(2).setCellValue("Grocery");
@@ -177,14 +185,6 @@ public class NewUserActivity extends AppCompatActivity {
             expense.getRow(4).createCell(4).setCellValue("Cash");
             //expense.getRow(4).createCell(5).setCellValue("");
             //expense.getRow(4).createCell(6).setCellValue("");
-
-            expense.createRow(5).createCell(0).setCellValue("01-05-2024");
-            expense.getRow(5).createCell(1).setCellValue("2300");
-            expense.getRow(5).createCell(2).setCellValue("Fuel");
-            expense.getRow(5).createCell(3).setCellValue("Petrol");
-            expense.getRow(5).createCell(4).setCellValue("Credit Card");
-            expense.getRow(5).createCell(5).setCellValue("SBI BPCL");
-            expense.getRow(5).createCell(6).setCellValue("KPHB");
 
             expense.createRow(6).createCell(0).setCellValue("10-05-2024");
             expense.getRow(6).createCell(1).setCellValue("2300");
@@ -246,7 +246,7 @@ public class NewUserActivity extends AppCompatActivity {
         System.out.println("inside NewUserActivity class, inside createExcelFile(), ===ended===");
     }
 
-    private boolean isEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+    private boolean isEmailInDatabase(SingleTonSharedLoginVariables sharedVariables) {
         sharedVariables.setEmail(editTextSignupEmail.getText().toString());
         System.out.println("email: " + sharedVariables.getEmail());
         sharedVariables.setFileName(sharedVariables.getEmail() + "_expensesFile.xlsx");

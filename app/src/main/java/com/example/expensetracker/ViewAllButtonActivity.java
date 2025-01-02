@@ -26,11 +26,14 @@ import com.example.expensetracker.adapters.TransactionExpenseAdapter;
 import com.example.expensetracker.models.PaymentsModel;
 import com.example.expensetracker.models.TransactionModel;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ViewAllButtonActivity extends AppCompatActivity {
 
@@ -53,7 +56,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
 
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_button);
@@ -82,11 +85,39 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         showTransactions();
 
         // Initialize the transactionlist and paymentslist with sample data
-        List<TransactionModel> transactions = new ArrayList<>();
+       /* List<TransactionModel> transactions = new ArrayList<>();
         for(HashMap<String, String> expenseRowMap: readExpenseDataRowMapListFromExcel){
             System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
             transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID),expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
-        }
+        }*/
+        //String homeMonth = "April 2024"; // testing
+        String homeMonth = getIntent().getStringExtra("selectedHomePageMonth");
+        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , before calculateEachPaymentTypeAmount() homeMonth: "+homeMonth);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+
+        List<TransactionModel> transactions = readExpenseDataRowMapListFromExcel.stream()
+                .filter(expenseRowMap -> {
+                    String date = expenseRowMap.get(DATE);
+                    LocalDate parsedDate = LocalDate.parse(date, formatter);
+
+                    int year = parsedDate.getYear();
+                    String monthName = parsedDate.getMonth().name().toLowerCase(); // Convert to lowercase
+                    String monthOfExpense = monthName.substring(0, 1).toUpperCase() + monthName.substring(1) + " " + year; // Capitalize the first letter
+
+                    return monthOfExpense.equals(homeMonth); // Filter based on matching month and year
+                })
+                .map(expenseRowMap -> new TransactionModel(
+                        expenseRowMap.get(TRANSACTIONID),
+                        expenseRowMap.get(DATE),
+                        expenseRowMap.get(AMOUNT),
+                        expenseRowMap.get(CATEGORY),
+                        expenseRowMap.get(SUBCATEGORY),
+                        expenseRowMap.get(PAYMENT),
+                        expenseRowMap.get(PAYMENT_SUBTYPE),
+                        expenseRowMap.get(NOTE)
+                ))
+                .collect(Collectors.toList()); // Collect into a List
+
 
         /*transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
         transactions.add(new TransactionModel("23-05-2024", "300", "Food", "Dinner", "Credit card", "1Card", "party"));
@@ -125,7 +156,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentsAdapter);
     }
 
-    private void loadData(SingleTonSharedVariables sharedVariables) {
+    private void loadData(SingleTonSharedLoginVariables sharedVariables) {
 
         readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);

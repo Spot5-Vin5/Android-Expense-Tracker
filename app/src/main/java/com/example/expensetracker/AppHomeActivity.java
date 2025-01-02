@@ -31,7 +31,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.expensetracker.models.HomeCategoryModel;
 import com.example.expensetracker.adapters.HomeCategoryAdapter;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -71,6 +71,16 @@ public class AppHomeActivity extends AppCompatActivity {
     private TextView homeBalance;
     private Spinner homePageMonthSelector;
     private List<String> sortedAllUniqueMonths;
+    private String selectedHomePageMonth;
+
+    public String getSelectedHomePageMonth() {
+        return selectedHomePageMonth;
+    }
+
+    public void setSelectedHomePageMonth(String selectedHomePageMonth) {
+        this.selectedHomePageMonth = selectedHomePageMonth;
+        System.out.println("inside AppHomeActivity class, setSelectedHomePageMonth(): "+ this.selectedHomePageMonth);
+    }
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
         Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -82,7 +92,7 @@ public class AppHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
 
         System.out.println("inside AppHomeActivity class, 1 onCreate(), ===started===");
         super.onCreate(savedInstanceState);
@@ -121,10 +131,31 @@ public class AppHomeActivity extends AppCompatActivity {
     private void configureSpinners() {
         System.out.println("configureSpinners() : sortedMonthData: " + sortedAllUniqueMonths);
         setUpSpinner(homePageMonthSelector, sortedAllUniqueMonths);
+
+        // Get the current month and year
+        LocalDate today = LocalDate.now();
+        String currentMonth = today.getMonth().name().toLowerCase(); // e.g., "january"
+        currentMonth = currentMonth.substring(0, 1).toUpperCase() + currentMonth.substring(1); // Capitalize the first letter
+        String defaultMonth = currentMonth + " " + today.getYear(); // e.g., "January 2025"
+
+        // Find the index of the current month in the spinner's list
+        int defaultPosition = sortedAllUniqueMonths.indexOf(defaultMonth);
+
+        // Set the spinner's default selection
+        if (defaultPosition >= 0) {
+            homePageMonthSelector.setSelection(defaultPosition); // Set the current month as the default
+            setSelectedHomePageMonth(defaultMonth); // Update the selectedHomePageMonth variable
+            System.out.println("Default month set to: " + defaultMonth);
+        }
+
         homePageMonthSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedHomePageMonth = (String) parent.getItemAtPosition(position);
+
+                 //selectedHomePageMonth = (String) parent.getItemAtPosition(position);
+                setSelectedHomePageMonth((String) parent.getItemAtPosition(position));
+                /*setSelectedHomePageMonth(currentMonth);*/
+                System.out.println("inside AppHomeActivity class, inside configureSpinners () selectedHomePageMonth: "+selectedHomePageMonth);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -163,12 +194,16 @@ public class AppHomeActivity extends AppCompatActivity {
             appHomeMenuButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, HomeMenuActivity.class)));
         }
         if (viewAllButton != null) {
-            viewAllButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, ViewAllButtonActivity.class)));
+            viewAllButton.setOnClickListener(v ->{
+                Intent intent = new Intent(AppHomeActivity.this, ViewAllButtonActivity.class);
+                intent.putExtra("selectedHomePageMonth", getSelectedHomePageMonth()); // Pass the value
+                startActivity(intent);
+            });
         }
         System.out.println("inside AppHomeActivity class, inside initializeUI () 3 of 3");
     }
 
-    private void updateGreeting(SingleTonSharedVariables sharedVariables) {
+    private void updateGreeting(SingleTonSharedLoginVariables sharedVariables) {
         System.out.println("inside AppHomeActivity class, inside updateGreeting () started ");
         Calendar calendar = Calendar.getInstance();
         System.out.println("inside AppHomeActivity class, inside updateGreeting () calendar: " + calendar);
@@ -193,7 +228,7 @@ public class AppHomeActivity extends AppCompatActivity {
     }
 
 
-    private void loadData(SingleTonSharedVariables sharedVariables) {
+    private void loadData(SingleTonSharedLoginVariables sharedVariables) {
         System.out.println("inside AppHomeActivity class, inside loadData ()");
 
         System.out.println("inside AppHomeActivity class, inside loadData () 1 of 8, ==Started==");

@@ -18,7 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
         loadDataFromExcel(sharedVariables);
 
         super.onCreate(savedInstanceState);
@@ -48,7 +48,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
         //  setupAdapter(); // testing place
     }
 
-    private void loadDataFromExcel(SingleTonSharedVariables sharedVariables) {
+    private void loadDataFromExcel(SingleTonSharedLoginVariables sharedVariables) {
         readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
         System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel () , readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
 
@@ -101,7 +101,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
         paymentListView.setAdapter(paymentAdapter);
     }
 
-    private void showAddCategoryDialog(SingleTonSharedVariables sharedVariables) {
+    private void showAddCategoryDialog(SingleTonSharedLoginVariables sharedVariables) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_payment_type_dialog, null);
         builder.setView(customLayout);

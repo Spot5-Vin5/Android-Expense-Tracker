@@ -7,7 +7,6 @@ import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTI
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 public class ProfileActivity extends AppCompatActivity {
     private TextView nameTextView, emailTextView;
@@ -30,7 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
 
         Log.i(TAG, "Inside ProfileActivity class: " + "onCreate method()");
         System.out.println("Inside ProfileActivity class: " + "onCreate method()");
@@ -78,7 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logoutButton);
     }
 
-    private void loadDataAndDisplay(SingleTonSharedVariables sharedVariables) {
+    private void loadDataAndDisplay(SingleTonSharedLoginVariables sharedVariables) {
         String nameFromDB;
         String emailFromDB;
 

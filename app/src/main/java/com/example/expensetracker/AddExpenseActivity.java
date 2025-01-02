@@ -21,11 +21,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.expensetracker.models.TransactionModel;
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.List;
@@ -54,7 +53,7 @@ public class AddExpenseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
         setContentView(R.layout.activity_add_expense);
         System.out.println("inside AddExpenseActivity class, inside onCreate () ==start== 123");
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
@@ -184,7 +183,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
-    private void loadDataFromSheet(SingleTonSharedVariables sharedVariables) {
+    private void loadDataFromSheet(SingleTonSharedLoginVariables sharedVariables) {
 
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () ==start== ");
         readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(CATEGORIES, sharedVariables.getFilePath());
@@ -231,7 +230,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         }
     }
 
-    private void handleSubmitButton(SingleTonSharedVariables sharedVariables) {
+    private void handleSubmitButton(SingleTonSharedLoginVariables sharedVariables) {
         System.out.println("inside AddExpenseActivity class, inside handleSubmitButton () ==started==");
         submitFormButton.setOnClickListener(v -> {
             String amount = amountInputField.getText().toString();

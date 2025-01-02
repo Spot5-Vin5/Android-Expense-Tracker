@@ -195,7 +195,7 @@ public class SingleTonExpenseTrackerExcelUtil {
     }
 
     //public ArrayList<String> readProfileFromExcel(String sheetName,  String email) {
-    public TreeMap<String, String> readProfileFromExcel(String sheetName, SingleTonSharedVariables sharedVariables) {
+    public TreeMap<String, String> readProfileFromExcel(String sheetName, SingleTonSharedLoginVariables sharedVariables) {
         //ArrayList<String> scripts = new ArrayList<String>();
         TreeMap<String, String> profileDetails = new TreeMap<>();
         int columnIndex = 0;

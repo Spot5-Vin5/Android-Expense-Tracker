@@ -1,12 +1,5 @@
 package com.example.expensetracker.utilities;
 
-import static com.example.expensetracker.utilities.HeadingConstants.BASE_PATH;
-import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
-
-import android.content.Context;
-
-import com.example.expensetracker.NewUserActivity;
-
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.Properties;
 
 public class ProfileReader {
     public static String nameFromDB;
@@ -26,7 +18,7 @@ public class ProfileReader {
     public static ArrayList<String> profileReader(String sheetName,ArrayList<String> getScripts) {
 
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
 
         /*// reading from application.properties file
         ApplicationPropertiesReader propertiesReader = new ApplicationPropertiesReader(context);

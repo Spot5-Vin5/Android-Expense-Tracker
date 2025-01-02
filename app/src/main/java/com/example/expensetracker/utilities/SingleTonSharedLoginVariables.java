@@ -1,6 +1,6 @@
 package com.example.expensetracker.utilities;
 
-public class SingleTonSharedVariables {
+public class SingleTonSharedLoginVariables {
     private String basePath; //basePath = getExternalFilesDir(null).getAbsolutePath();
     private String fileName; //fileName = email+ "_expensesFile.xlsx";
     private String filePath; //filePath = basePath + "/Expense Tracker App/" + fileName;
@@ -8,16 +8,16 @@ public class SingleTonSharedVariables {
     private String expensesFilesAppFolder; //expensesFilesAppFolder = basePath + "/Expense Tracker App/";
 
     // Singleton instance
-    private static SingleTonSharedVariables instance;
+    private static SingleTonSharedLoginVariables instance;
 
     // Private constructor to prevent instantiation
-    private SingleTonSharedVariables() {
+    private SingleTonSharedLoginVariables() {
     }
 
     // Method to get the single instance
-    public static SingleTonSharedVariables getInstance() {
+    public static SingleTonSharedLoginVariables getInstance() {
         if (instance == null) {
-            instance = new SingleTonSharedVariables();
+            instance = new SingleTonSharedLoginVariables();
         }
         return instance;
     }

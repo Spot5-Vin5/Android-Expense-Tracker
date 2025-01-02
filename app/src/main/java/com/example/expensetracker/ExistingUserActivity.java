@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.expensetracker.utilities.SingleTonExpenseTrackerExcelUtil;
-import com.example.expensetracker.utilities.SingleTonSharedVariables;
+import com.example.expensetracker.utilities.SingleTonSharedLoginVariables;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class ExistingUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         singleTonExpenseTrackerExcelUtil = SingleTonExpenseTrackerExcelUtil.getInstance(getApplicationContext());
         // Initialize variables in SharedVariables
-        SingleTonSharedVariables sharedVariables = SingleTonSharedVariables.getInstance();
+        SingleTonSharedLoginVariables sharedVariables = SingleTonSharedLoginVariables.getInstance();
         super.onCreate(savedInstanceState);
         // Initially set content view to email layout
         setContentView(R.layout.activity_existing_user);
@@ -51,7 +51,7 @@ public class ExistingUserActivity extends AppCompatActivity {
         });
     }
 
-    private void handleSigninNextClick(SingleTonSharedVariables sharedVariables) {
+    private void handleSigninNextClick(SingleTonSharedLoginVariables sharedVariables) {
         //email = getEmailFromEditText();
         sharedVariables.setEmail(getEmailFromEditText());
         //if (email == null) {
@@ -77,12 +77,12 @@ public class ExistingUserActivity extends AppCompatActivity {
     }
 
     //private boolean isValidEmail(String email) {
-    private boolean isValidEmail(SingleTonSharedVariables sharedVariables) {
+    private boolean isValidEmail(SingleTonSharedLoginVariables sharedVariables) {
         //return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
         return !TextUtils.isEmpty(sharedVariables.getEmail()) && android.util.Patterns.EMAIL_ADDRESS.matcher(sharedVariables.getEmail()).matches();
     }
 
-    private void checkEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+    private void checkEmailInDatabase(SingleTonSharedLoginVariables sharedVariables) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -106,7 +106,7 @@ public class ExistingUserActivity extends AppCompatActivity {
     }
 
     //private boolean isEmailInDatabase(String email) {
-    private boolean isEmailInDatabase(SingleTonSharedVariables sharedVariables) {
+    private boolean isEmailInDatabase(SingleTonSharedLoginVariables sharedVariables) {
         // fileName = email + "_expensesFile.xlsx";
         // Log.d(TAG, "fileName: " + fileName);
         // System.out.println("fileName: " + fileName);
@@ -158,7 +158,7 @@ public class ExistingUserActivity extends AppCompatActivity {
         return accountExcelFiles.contains(sharedVariables.getFileName());
     }
 
-    private void loadPasswordLayout(SingleTonSharedVariables sharedVariables) {
+    private void loadPasswordLayout(SingleTonSharedLoginVariables sharedVariables) {
         System.out.println("Loading password layout.");
         setContentView(R.layout.activity_existing_user_password);
         editTextSigninPassword = findViewById(R.id.editTextSigninPassword);
