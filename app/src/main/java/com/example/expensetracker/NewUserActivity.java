@@ -13,7 +13,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
 import static com.example.expensetracker.utilities.HeadingConstants.PASSWORD;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
-import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPES;
 import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBTYPES;
@@ -178,6 +178,15 @@ public class NewUserActivity extends AppCompatActivity {
             expense.getRow(5).createCell(6).setCellValue("SBI BPCL");
             expense.getRow(5).createCell(7).setCellValue("KPHB");
 
+            expense.createRow(6).createCell(0).setCellValue(UUID.randomUUID().toString());
+            expense.getRow(6).createCell(1).setCellValue("10-01-2025");
+            expense.getRow(6).createCell(2).setCellValue("2300");
+            expense.getRow(6).createCell(3).setCellValue("Food");
+            expense.getRow(6).createCell(4).setCellValue("Dinner");
+            expense.getRow(6).createCell(5).setCellValue("Credit Card");
+            expense.getRow(6).createCell(6).setCellValue("BOB one");
+            expense.getRow(6).createCell(7).setCellValue("test");
+
            /* expense.createRow(4).createCell(0).setCellValue("28-04-2024");
             expense.getRow(4).createCell(1).setCellValue("1000");
             expense.getRow(4).createCell(2).setCellValue("Grocery");
@@ -186,13 +195,7 @@ public class NewUserActivity extends AppCompatActivity {
             //expense.getRow(4).createCell(5).setCellValue("");
             //expense.getRow(4).createCell(6).setCellValue("");
 
-            expense.createRow(6).createCell(0).setCellValue("10-05-2024");
-            expense.getRow(6).createCell(1).setCellValue("2300");
-            expense.getRow(6).createCell(2).setCellValue("Fuel");
-            expense.getRow(6).createCell(3).setCellValue("Petrol");
-            expense.getRow(6).createCell(4).setCellValue("Cash");
-            //expense.getRow(6).createCell(5).setCellValue("");
-            //expense.getRow(6).createCell(6).setCellValue("");*/
+            */
 
             XSSFSheet profileSheet = workbook.createSheet(PROFILE_ACTIVITY);
             profileSheet.createRow(0).createCell(0).setCellValue(PROFILE_ACTIVITY);
@@ -217,8 +220,8 @@ public class NewUserActivity extends AppCompatActivity {
             categoriesSheet.createRow(4).createCell(0).setCellValue("Grocery");
 
 
-            XSSFSheet paymentSheet = workbook.createSheet(PAYMENT_TYPE);
-            paymentSheet.createRow(0).createCell(0).setCellValue(PAYMENT_TYPE);
+            XSSFSheet paymentSheet = workbook.createSheet(PAYMENT_TYPES);
+            paymentSheet.createRow(0).createCell(0).setCellValue(PAYMENT_TYPES);
             paymentSheet.createRow(1).createCell(0).setCellValue(TYPE);
             paymentSheet.getRow(1).createCell(1).setCellValue(SUBTYPES);
             // Sample data insert

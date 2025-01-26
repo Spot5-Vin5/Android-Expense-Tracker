@@ -7,7 +7,7 @@ public class HeadingConstants {
     //Excel  Sheet Names
     public static final String PROFILE_ACTIVITY = "Profile";
     public static final String CATEGORIES = "Categories";
-    public static final String PAYMENT_TYPE = "Payment Types";
+    public static final String PAYMENT_TYPES = "Payment Types";
     public static final String BUDGET = "Budget";
     public static final String EXPENSE = "Expenses";
 

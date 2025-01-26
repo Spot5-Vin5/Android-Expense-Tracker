@@ -50,9 +50,9 @@ public class SingleTonExpenseTrackerExcelUtil {
     }
 
     public HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> readTypesListandSubTypesMapFromExcelUtil(String sheetName, String excelFilePath) {
-        HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>();
-        ArrayList<String> typeList = new ArrayList<>();
-        HashMap<String, ArrayList<String>> typesToSubtypesMap = new HashMap<>();
+        HashMap<ArrayList<String>, HashMap<String, ArrayList<String>>> typesListAndSubTypesMap = new HashMap<>(); // to bring below all typeList and typesToSubtypesMap // types list ,type = subType[0,1,2,3,4,....]
+        ArrayList<String> typeList = new ArrayList<>(); // to bring all types in this list
+        HashMap<String, ArrayList<String>> typesToSubtypesMap = new HashMap<>(); // to bring type and its subtype list //type = subType[0,1,2,3,4,....]
 
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesandSubTypesFromExcelUtil1 () 1 of 2, ==Started==");
 
@@ -83,6 +83,8 @@ public class SingleTonExpenseTrackerExcelUtil {
         return typesListAndSubTypesMap;
     }
 
+    /*This method is used to get category types from categories sheet.
+    * */
     public ArrayList<String> readTypesFromExcelUtil(String sheetName, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap, String excelFilePath) {
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () excelFilePath: " + excelFilePath);
         System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readTypesFromExcelUtil () 1 of 2, ==Started==");
@@ -114,7 +116,7 @@ public class SingleTonExpenseTrackerExcelUtil {
 
     public void readSubTypesFromSheet(Row row, String typeFromSheet, HashMap<String, ArrayList<String>> typesToSubtypesMap) {
 
-        ArrayList<String> subCatList = new ArrayList<String>();
+        ArrayList<String> subTypeList = new ArrayList<String>();
         int subCatColumnIndex = 1;//Subcat starts at index1
         Cell subCell;
         do {
@@ -124,12 +126,12 @@ public class SingleTonExpenseTrackerExcelUtil {
                 break;
             } else {
                 if (subCell.getCellType() == CellType.STRING) {
-                    subCatList.add(subCell.getStringCellValue());
+                    subTypeList.add(subCell.getStringCellValue());
                     subCatColumnIndex++;
                 }
             }
         } while (subCell.getCellType() != CellType.BLANK);
-        typesToSubtypesMap.put(typeFromSheet, subCatList);
+        typesToSubtypesMap.put(typeFromSheet, subTypeList);
     }
 
     public void writeTypesToExcelUtil(String sheetName, String type, ArrayList<String> typeList, HashMap<String, ArrayList<String>> typesToSubtypesMap, String excelFilePath) {
@@ -365,14 +367,14 @@ public class SingleTonExpenseTrackerExcelUtil {
         return expenseDataRowMapList;
     }
 
-    public ArrayList<String> readAllSubPaymentsFromExcel(HashMap<String, ArrayList<String>> paymentToSubPaymentMap, String className) {
-        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line1 ==started==" + className);
+    public ArrayList<String> readAllSubPaymentsFromExcel(HashMap<String, ArrayList<String>> paymentToSubPaymentMap) {
+        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line1 ==started==" );
         ArrayList<String> readAllSubPaymentsFromExcel = new ArrayList<>();
         for (Map.Entry<String, ArrayList<String>> entry : paymentToSubPaymentMap.entrySet()) {
             readAllSubPaymentsFromExcel.addAll(entry.getValue());
-            System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () ,line3 ==started==" + className + "::" + readAllSubPaymentsFromExcel);
+            System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () ,line3 ==started=="  + readAllSubPaymentsFromExcel);
         }
-        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line4 ==ended==" + className);
+        System.out.println("inside SingleTonExpenseTrackerExcelUtil class, inside readAllSubPaymentsFromExcel () , line4 ==ended==" );
         return readAllSubPaymentsFromExcel;
     }
 

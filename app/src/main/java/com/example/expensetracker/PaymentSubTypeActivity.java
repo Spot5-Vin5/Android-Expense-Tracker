@@ -1,6 +1,6 @@
 package com.example.expensetracker;
 
-import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPES;
 
 import android.os.Bundle;
 import android.view.View;
@@ -56,7 +56,7 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
     }
 
     private void loadDataFromSheet(SingleTonSharedLoginVariables sharedVariables) {
-        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPES, sharedVariables.getFilePath());
         System.out.println("inside SubcategoryActivity class, inside loadDataFromSheet () , readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
 
         /*readCategoryListFromSheet = readAllCategoryTypesListandAllCategorySubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -122,7 +122,7 @@ public class PaymentSubTypeActivity extends AppCompatActivity {
             String subcategory = editText.getText().toString();
             if (!subcategory.isEmpty() && !readSubPaymentListfromSheet.contains(subcategory)) {
                // ExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPE ,paymentName, subcategory, readSubPaymentListfromSheet, paymentToSubpaymentMap);
-                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPE ,paymentName, subcategory, readSubPaymentListfromSheet, paymentToPaymentSubTypesMap, sharedVariables.getFilePath());
+                singleTonExpenseTrackerExcelUtil.writeSubTypesToExcelUtil(PAYMENT_TYPES,paymentName, subcategory, readSubPaymentListfromSheet, paymentToPaymentSubTypesMap, sharedVariables.getFilePath());
                 subPaymentAdapter.notifyDataSetChanged();
             }
         });

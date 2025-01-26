@@ -34,7 +34,7 @@
             android:id="@+id/homeBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Balance: $5,320"
+            android:text="Current Month Balance: ₹ Add Expense to show"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -74,14 +74,23 @@
         android:layout_height="250dp"
         android:layout_below="@id/top_section"
         android:layout_marginBottom="5dp" />
+    <!-- TextView for "Data not available" message -->
+    <TextView
+        android:id="@+id/data_not_available_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Data not available. Add Expense to show !!"
+        android:textSize="18sp"
+        android:visibility="gone" /> <!-- Initially hidden -->
 
     <ListView
         android:id="@+id/home_category_model_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_below="@id/pie_chart_container"
         android:layout_above="@id/bottom_navigation"
+        android:layout_below="@id/pie_chart_container"
+        android:layout_weight="1"
         android:dividerHeight="1dp"
         android:scrollbars="vertical" />
 

@@ -194,7 +194,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () categoryToCategoriesSubTypesMap : " + categoryToCategoriesSubTypesMap);
 
 
-        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPES, sharedVariables.getFilePath());
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil : " + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
         readPaymentListFromSheet = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next();
         System.out.println("inside AddExpenseActivity class, inside loadDataFromSheet () readPaymentListFromSheet : " + readPaymentListFromSheet);

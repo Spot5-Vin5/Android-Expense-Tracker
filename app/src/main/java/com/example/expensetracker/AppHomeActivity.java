@@ -6,7 +6,7 @@ import static com.example.expensetracker.utilities.HeadingConstants.CATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.DATE;
 import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
 import static com.example.expensetracker.utilities.HeadingConstants.NAME;
-import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPES;
 import static com.example.expensetracker.utilities.HeadingConstants.PROFILE_ACTIVITY;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
@@ -79,7 +79,30 @@ public class AppHomeActivity extends AppCompatActivity {
 
     public void setSelectedHomePageMonth(String selectedHomePageMonth) {
         this.selectedHomePageMonth = selectedHomePageMonth;
-        System.out.println("inside AppHomeActivity class, setSelectedHomePageMonth(): "+ this.selectedHomePageMonth);
+        System.out.println("inside AppHomeActivity class, setSelectedHomePageMonth(): " + this.selectedHomePageMonth);
+    }
+
+    private StringBuffer selectedHomePageMonth1 = new StringBuffer(".");
+
+    public StringBuffer getSelectedHomePageMonth1() {
+        return selectedHomePageMonth1;
+    }
+
+    public void setSelectedHomePageMonth1(String selectedHomePageMonth1) {
+        System.out.println("inside AppHomeActivity class, setSelectedHomePageMonth1(): " + this.selectedHomePageMonth1);
+        // Clear the previous content
+        this.selectedHomePageMonth1.setLength(0);
+        System.out.println("inside AppHomeActivity class, setSelectedHomePageMonth1(): // Clear the previous content " + this.selectedHomePageMonth1);
+        // Assign a new value
+        this.selectedHomePageMonth1.append(selectedHomePageMonth1);
+        System.out.println("inside AppHomeActivity class, getSelectedHomePageMonth1(): // Assign a new value " + this.selectedHomePageMonth1);
+        calculateEachCategoryAmount(selectedHomePageMonth1);
+        loadPieChartData();
+        calculateTotalMonthExpense();
+        // Set up ListView
+        setupListView();
+        //Set up homeBalance
+        loadHomeBalance();
     }
 
     private static WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
@@ -108,28 +131,43 @@ public class AppHomeActivity extends AppCompatActivity {
         updateGreeting(sharedVariables);
         // Load data
         loadData(sharedVariables);
-        System.out.println("inside AppHomeActivity class,inside 4 onCreate(), before setupListView()");
-
         // Load Unique Months
-        getAllUniqueMonthsFromAllTransactions(readExpenseDataRowMapListFromExcel);
+        getAllUniqueMonthsFromAllTransactions();
         System.out.println("onCreate() : sortedMonthData: " + sortedAllUniqueMonths);
-        // Set up HomePageMonthSelector
-        configureSpinners();
 
-        // Set up ListView
-        setupListView(eachCategoryAmount);
         System.out.println("inside AppHomeActivity class,inside 5 onCreate(), before setupPieChart(), setupPieChart() ");
         // Set up Pie Chart
         setupPieChart();
+        // Set up HomePageMonthSelector
+        configureHomePageSpinner();
         System.out.println("inside AppHomeActivity class,inside 6 onCreate(), before setupPieChart(), loadPieChartData() ");
-        loadPieChartData();
-        //Set up homeBalance
-        loadHomeBalance();
+
         System.out.println("inside AppHomeActivity class, 7 onCreate(), ===ended===");
     }
 
-    private void configureSpinners() {
-        System.out.println("configureSpinners() : sortedMonthData: " + sortedAllUniqueMonths);
+    private void configureHomePageSpinner() {
+        System.out.println("configureHomePageSpinner() : ==started== sortedMonthData: " + sortedAllUniqueMonths);
+
+        // Check if the list is not null or empty
+        if (sortedAllUniqueMonths == null || sortedAllUniqueMonths.isEmpty()) {
+            // Show "Data not available" message
+            TextView dataNotAvailableMessage = findViewById(R.id.data_not_available_message);
+            dataNotAvailableMessage.setVisibility(View.VISIBLE);
+
+            // Hide the Pie Chart
+            PieChart pieChart = findViewById(R.id.pie_chart_container);
+            pieChart.setVisibility(View.GONE);
+
+            System.out.println("Data not available");
+            return; // Exit early if list is empty or null
+        }
+        // Show the Pie Chart again and hide the message if data is available
+        TextView dataNotAvailableMessage = findViewById(R.id.data_not_available_message);
+        dataNotAvailableMessage.setVisibility(View.GONE);
+
+        PieChart pieChart = findViewById(R.id.pie_chart_container);
+        pieChart.setVisibility(View.VISIBLE);
+
         setUpSpinner(homePageMonthSelector, sortedAllUniqueMonths);
 
         // Get the current month and year
@@ -140,35 +178,55 @@ public class AppHomeActivity extends AppCompatActivity {
 
         // Find the index of the current month in the spinner's list
         int defaultPosition = sortedAllUniqueMonths.indexOf(defaultMonth);
+        System.out.println("configureHomePageSpinner() : defaultPosition: " + defaultPosition);
 
         // Set the spinner's default selection
         if (defaultPosition >= 0) {
             homePageMonthSelector.setSelection(defaultPosition); // Set the current month as the default
-            setSelectedHomePageMonth(defaultMonth); // Update the selectedHomePageMonth variable
             System.out.println("Default month set to: " + defaultMonth);
+            setSelectedHomePageMonth1(defaultMonth);
+        } else {
+            System.out.println("configureHomePageSpinner() : else: ");
+            String previousDefaultMonth = sortedAllUniqueMonths.get(sortedAllUniqueMonths.size() - 1); // Get the last item
+            System.out.println("configureHomePageSpinner() : else: previousDefaultMonth: " + previousDefaultMonth);
+            setSelectedHomePageMonth1(previousDefaultMonth);
+            homePageMonthSelector.setSelection(sortedAllUniqueMonths.size() - 1); // Set the last item as default
         }
 
         homePageMonthSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            private boolean isFirstSelection = true;
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Skip the first selection when spinner is initialized
+                if (isFirstSelection) {
+                    isFirstSelection = false; // Mark the first selection as handled
+                    return; // Don't do anything on the first selection
+                }
 
-                 //selectedHomePageMonth = (String) parent.getItemAtPosition(position);
-                setSelectedHomePageMonth((String) parent.getItemAtPosition(position));
-                /*setSelectedHomePageMonth(currentMonth);*/
-                System.out.println("inside AppHomeActivity class, inside configureSpinners () selectedHomePageMonth: "+selectedHomePageMonth);
+                System.out.println("inside AppHomeActivity class, inside configureHomePageSpinner() : inside homePageMonthSelector ==started==");
+                String homePageMonthSelectorMonth = (String) parent.getItemAtPosition(position);
+                System.out.println("inside AppHomeActivity class, inside configureHomePageSpinner() : homePageMonthSelectorMonth: " + homePageMonthSelectorMonth);
+                setSelectedHomePageMonth1(homePageMonthSelectorMonth); // Update selected month
+                System.out.println("inside AppHomeActivity class, inside configureHomePageSpinner(): " + selectedHomePageMonth);
+                System.out.println("inside AppHomeActivity class, inside configureHomePageSpinner() : inside homePageMonthSelector ==ended==");
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                // Handle if nothing is selected (not necessarily needed in most cases)
             }
         });
+
+        System.out.println("configureHomePageSpinner() : ==ended== ");
     }
+
 
     private void setUpSpinner(Spinner homePageMonthSelector, List<String> sortedAllUniqueMonths) {
         if (sortedAllUniqueMonths == null) {
             return;
         }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortedAllUniqueMonths);
-            homePageMonthSelector.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortedAllUniqueMonths);
+        homePageMonthSelector.setAdapter(adapter);
 
     }
 
@@ -194,9 +252,10 @@ public class AppHomeActivity extends AppCompatActivity {
             appHomeMenuButton.setOnClickListener(v -> startActivity(new Intent(AppHomeActivity.this, HomeMenuActivity.class)));
         }
         if (viewAllButton != null) {
-            viewAllButton.setOnClickListener(v ->{
+            viewAllButton.setOnClickListener(v -> {
                 Intent intent = new Intent(AppHomeActivity.this, ViewAllButtonActivity.class);
-                intent.putExtra("selectedHomePageMonth", getSelectedHomePageMonth()); // Pass the value
+                System.out.println("inside AppHomeActivity class, inside viewAllButton button getSelectedHomePageMonth1(): "+getSelectedHomePageMonth1().toString());
+                intent.putExtra("selectedHomePageMonth1", getSelectedHomePageMonth1().toString()); // Pass the value
                 startActivity(intent);
             });
         }
@@ -235,29 +294,29 @@ public class AppHomeActivity extends AppCompatActivity {
         readAllCategoryListFromSheet = singleTonExpenseTrackerExcelUtil.readTypesFromExcelUtil(CATEGORIES, new ArrayList<String>(), categoryToSubcategoriesMap, sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 2 of 8, readAllCategoryListFromSheet :" + readAllCategoryListFromSheet);
 
-        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPES, sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
 
-        readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();
+        readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next(); // here key is the list of all payment types
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, readAllPaymentTypeListFromSheet" + readAllPaymentTypeListFromSheet);
 
-        paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readAllPaymentTypeListFromSheet);
+        paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readAllPaymentTypeListFromSheet); // as the key is the list of all payment types
         System.out.println("inside AppHomeActivity class, inside loadData () 3 of 8, paymentToSubPaymentMap" + paymentToSubPaymentMap);
 
         readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside AppHomeActivity class, inside loadData () 5 of 8, readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
         System.out.println("inside AppHomeActivity class, inside loadData () 6 of 8, before calculateTotalMonthExpense ()");
-        calculateTotalMonthExpense();
+        //calculateTotalMonthExpense();
 
         System.out.println("inside AppHomeActivity class, inside loadData () 7 of 8, before calculateEachCategoryAmount()");
-        calculateEachCategoryAmount();
+        //calculateEachCategoryAmount();
 
         System.out.println("inside AppHomeActivity class, inside loadData () 8 of 8, ==ended==");
     }
 
 
-    private void getAllUniqueMonthsFromAllTransactions(ArrayList<HashMap<String, String>> readExpenseDataRowMapListFromExcel) {
+    private void getAllUniqueMonthsFromAllTransactions() {
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction ()");
         System.out.println("inside AppHomeActivity class, inside getAllMonthesofTransaction () readExpenseDataRowMapListFromExcel: " + readExpenseDataRowMapListFromExcel);
         // Define the flexible date formatter
@@ -337,7 +396,7 @@ public class AppHomeActivity extends AppCompatActivity {
         return entry; // Return as is if format is invalid
     }
 
-    private void setupListView(HashMap<String, Integer> eachCategoryAmount) {
+    private void setupListView() {
         System.out.println("inside AppHomeActivity class, inside setupListView () 1, ==Started==");
         ListView homeCategoryList = findViewById(R.id.home_category_model_list);
 
@@ -380,7 +439,7 @@ public class AppHomeActivity extends AppCompatActivity {
         return homeCategoryModelExpensesList;
     }
 
-    private void calculateTotalMonthExpense() {
+    /*private void calculateTotalMonthExpense() {
         System.out.println("inside AppHomeActivity class, inside calculateTotalMonthExpense () 1 of 5, ==Started==");
         //totalMonthExpense = 0;
         for (HashMap<String, String> rowExpenseMap : readExpenseDataRowMapListFromExcel) {
@@ -397,31 +456,74 @@ public class AppHomeActivity extends AppCompatActivity {
             }
         }
         System.out.println("inside AppHomeActivity class, inside calculateTotalMonthExpense () 5 of 5, ==ended==" + totalMonthExpense);
+    }*/
+    private void calculateTotalMonthExpense() {
+        System.out.println("inside AppHomeActivity class, inside calculateTotalMonthExpense () 1 of 5, ==Started==");
+        //totalMonthExpense = 0;
+        totalMonthExpense = eachCategoryAmount.values()
+                .stream()
+                .mapToInt(Integer::intValue) // Convert to primitive int
+                .sum();
+        System.out.println("inside AppHomeActivity class, inside calculateTotalMonthExpense () 5 of 5, ==ended==" + totalMonthExpense);
     }
 
-    private void calculateEachCategoryAmount() {
-        System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 1 of 7, ==Started==");
+    private void calculateEachCategoryAmount(String selectedHomePageMonth1) {
+        System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 1 of 7, selectedHomePageMonth1 ==Started== " + selectedHomePageMonth1);
         eachCategoryAmount.clear();
+        System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 1 of 7, eachCategoryAmount.clear(): " + eachCategoryAmount);
         for (String category : readAllCategoryListFromSheet) {
             System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 2 of 7, " + category);
             for (HashMap<String, String> rowExpenseMap : readExpenseDataRowMapListFromExcel) {
                 System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 3 of 7, " + rowExpenseMap);
-                try {
-                    String amountStr = rowExpenseMap.get(AMOUNT);
-                    System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 4 of 7, " + amountStr);
-                    if (rowExpenseMap.get(CATEGORY).equals(category) && amountStr != null) {
+                String date = rowExpenseMap.get(DATE); // Get the DATE value
+                System.out.println("Inside AppHomeActivity class, inside calculateEachCategoryAmount() date: " + date);
+                // Define the flexible date formatter
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+                System.out.println("Inside AppHomeActivity class, inside calculateEachCategoryAmount() date: " + formatter);
+                Optional<String> optionalStr = Optional.ofNullable(date); // using java 8 optional class
+                // if (date != null) { // Check if date is not null-> if (Objects.nonNull(str)) using  java.util.Objects class in Java 8
+                if (optionalStr.isPresent()) {
+                    System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date isPresent?" + date);
+                    // Parse the date only if it's not null
+                    try {
+                        LocalDate parsedDate = LocalDate.parse(date, formatter);
+                        // Extract day, month, and year
+                        int day = parsedDate.getDayOfMonth();
+                        int month = parsedDate.getMonthValue();
+                        int year = parsedDate.getYear();
 
-                        if (eachCategoryAmount.isEmpty() || !eachCategoryAmount.containsKey(category)) {
-                            eachCategoryAmount.put(category, Integer.parseInt(rowExpenseMap.get(AMOUNT)));
-                            System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 5 of 7, if " + eachCategoryAmount);
-                        } else {
-                            eachCategoryAmount.put(category, eachCategoryAmount.get(category) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
-                            System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 6 of 7, else " + eachCategoryAmount);
+                        // Get month name
+                        String monthName = parsedDate.getMonth().name(); // This will be in uppercase (e.g., JANUARY)
+                        System.out.println("Parsed Date: Day = " + day + ", Month = " + month + " (" + monthName + "), Year = " + year);
+
+                        String formattedMonthName = monthName + " " + year;  // Return "Month Year" format
+                        // Normalize the month-year string to title case for better compatibility
+                        String normalizedMonth = normalizeMonthYear(formattedMonthName);
+
+                        try {
+                            if (normalizedMonth.equals(selectedHomePageMonth1)) {
+                                String amountStr = rowExpenseMap.get(AMOUNT);
+                                System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 4 of 7, " + amountStr);
+                                if (rowExpenseMap.get(CATEGORY).equals(category) && amountStr != null) {
+
+                                    if (eachCategoryAmount.isEmpty() || !eachCategoryAmount.containsKey(category)) {
+                                        eachCategoryAmount.put(category, Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                                        System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 5 of 7, if " + eachCategoryAmount);
+                                    } else {
+                                        eachCategoryAmount.put(category, eachCategoryAmount.get(category) + Integer.parseInt(rowExpenseMap.get(AMOUNT)));
+                                        System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 6 of 7, else " + eachCategoryAmount);
+                                    }
+                                }
+                            }
+                        } catch (NumberFormatException | NullPointerException e) {
+                            e.printStackTrace();
                         }
+                    } catch (Exception e) {
+                        System.out.println("Error parsing date: " + date);
+                        //  return null;  // Return null if the date format is invalid (optional)
                     }
-                } catch (NumberFormatException | NullPointerException e) {
-                    e.printStackTrace();
                 }
+
             }
         }
         System.out.println("inside AppHomeActivity class, inside calculateEachCategoryAmount () 7 of 7, ==ended==");
@@ -449,6 +551,8 @@ public class AppHomeActivity extends AppCompatActivity {
 
     private void loadPieChartData() {
         System.out.println("inside AppHomeActivity class, inside loadPieChartData () 1, ==Started==");
+
+
         if (pieChart == null) return;
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : eachCategoryAmount.entrySet()) {

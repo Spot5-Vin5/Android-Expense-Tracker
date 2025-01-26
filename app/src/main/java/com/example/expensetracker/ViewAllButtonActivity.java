@@ -9,11 +9,12 @@ import static com.example.expensetracker.utilities.HeadingConstants.EXPENSE;
 import static com.example.expensetracker.utilities.HeadingConstants.NOTE;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT;
 import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_SUBTYPE;
-import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPES;
 import static com.example.expensetracker.utilities.HeadingConstants.SUBCATEGORY;
 import static com.example.expensetracker.utilities.HeadingConstants.TRANSACTIONID;
 import static com.example.expensetracker.utilities.HeadingConstants.expenseColumnIndices;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class ViewAllButtonActivity extends AppCompatActivity {
 
@@ -61,6 +62,17 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_button);
 
+        // Retrieve the data passed from AppHomeActivity
+        Intent intent = getIntent();
+        String selectedHomePageMonth = intent.getStringExtra("selectedHomePageMonth1");
+        // Check if the value is null or not
+        if (selectedHomePageMonth != null) {
+            // Use the retrieved value as needed
+            System.out.println("inside ViewAllButtonActivity class, inside onCreate () , Selected Home Page Month: " + selectedHomePageMonth);
+        } else {
+            System.out.println("No data received for selectedHomePageMonth1");
+        }
+
         transactionsList = findViewById(R.id.expenseTransactionsList);
         paymentsList = findViewById(R.id.expensePaymentsList);
         btnTransactions = findViewById(R.id.btnTransactions);
@@ -85,39 +97,49 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         showTransactions();
 
         // Initialize the transactionlist and paymentslist with sample data
-       /* List<TransactionModel> transactions = new ArrayList<>();
-        for(HashMap<String, String> expenseRowMap: readExpenseDataRowMapListFromExcel){
-            System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
-            transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID),expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
-        }*/
-        //String homeMonth = "April 2024"; // testing
-        String homeMonth = getIntent().getStringExtra("selectedHomePageMonth");
-        System.out.println("inside ViewAllButtonActivity class, inside onCreate () , before calculateEachPaymentTypeAmount() homeMonth: "+homeMonth);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+        List<TransactionModel> transactions = new ArrayList<>();
+        for (HashMap<String, String> expenseRowMap : readExpenseDataRowMapListFromExcel) {
 
-        List<TransactionModel> transactions = readExpenseDataRowMapListFromExcel.stream()
-                .filter(expenseRowMap -> {
-                    String date = expenseRowMap.get(DATE);
+            String date = expenseRowMap.get(DATE); // Get the DATE value
+            System.out.println("Inside AppHomeActivity class, inside calculateEachCategoryAmount() date: " + date);
+            // Define the flexible date formatter
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+            System.out.println("Inside AppHomeActivity class, inside calculateEachCategoryAmount() date: " + formatter);
+            Optional<String> optionalStr = Optional.ofNullable(date); // using java 8 optional class
+            // if (date != null) { // Check if date is not null-> if (Objects.nonNull(str)) using  java.util.Objects class in Java 8
+            if (optionalStr.isPresent()) {
+                System.out.println("Inside AppHomeActivity class, inside getAllMonthesofTransaction() date isPresent?" + date);
+                // Parse the date only if it's not null
+                try {
                     LocalDate parsedDate = LocalDate.parse(date, formatter);
-
+                    // Extract day, month, and year
+                    int day = parsedDate.getDayOfMonth();
+                    int month = parsedDate.getMonthValue();
                     int year = parsedDate.getYear();
-                    String monthName = parsedDate.getMonth().name().toLowerCase(); // Convert to lowercase
-                    String monthOfExpense = monthName.substring(0, 1).toUpperCase() + monthName.substring(1) + " " + year; // Capitalize the first letter
 
-                    return monthOfExpense.equals(homeMonth); // Filter based on matching month and year
-                })
-                .map(expenseRowMap -> new TransactionModel(
-                        expenseRowMap.get(TRANSACTIONID),
-                        expenseRowMap.get(DATE),
-                        expenseRowMap.get(AMOUNT),
-                        expenseRowMap.get(CATEGORY),
-                        expenseRowMap.get(SUBCATEGORY),
-                        expenseRowMap.get(PAYMENT),
-                        expenseRowMap.get(PAYMENT_SUBTYPE),
-                        expenseRowMap.get(NOTE)
-                ))
-                .collect(Collectors.toList()); // Collect into a List
+                    // Get month name
+                    String monthName = parsedDate.getMonth().name(); // This will be in uppercase (e.g., JANUARY)
+                    System.out.println("Parsed Date: Day = " + day + ", Month = " + month + " (" + monthName + "), Year = " + year);
 
+                    String formattedMonthName = monthName + " " + year;  // Return "Month Year" format
+                    // Normalize the month-year string to title case for better compatibility
+                    String normalizedMonth = normalizeMonthYear(formattedMonthName);
+
+                    try {
+                        if (normalizedMonth.equals(selectedHomePageMonth)) {
+                            System.out.println("inside ViewAllButtonActivity class, inside onCreate () , map :" + expenseRowMap);
+                            transactions.add(new TransactionModel(expenseRowMap.get(TRANSACTIONID), expenseRowMap.get(DATE), expenseRowMap.get(AMOUNT), expenseRowMap.get(CATEGORY), expenseRowMap.get(SUBCATEGORY), expenseRowMap.get(PAYMENT), expenseRowMap.get(PAYMENT_SUBTYPE), expenseRowMap.get(NOTE)));
+                        }
+                    } catch (NumberFormatException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error parsing date: " + date);
+                    //  return null;  // Return null if the date format is invalid (optional)
+                }
+            }
+
+        }
 
         /*transactions.add(new TransactionModel("21-05-2024", "100", "Food", "Lunch", "Credit card", "ICICI", "party"));
         transactions.add(new TransactionModel("23-05-2024", "300", "Food", "Dinner", "Credit card", "1Card", "party"));
@@ -156,12 +178,23 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentsAdapter);
     }
 
+    private String normalizeMonthYear(String entry) {
+        String[] parts = entry.split(" ");
+        if (parts.length == 2) {
+            // Normalize the month part (capitalize the first letter and make the rest lowercase)
+            String month = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1).toLowerCase();
+            System.out.println("inside AppHomeActivity class, inside normalizeMonthYear (): " + month + " " + parts[1]);
+            return month + " " + parts[1]; // Reconstruct the string
+        }
+        return entry; // Return as is if format is invalid
+    }
+
     private void loadData(SingleTonSharedLoginVariables sharedVariables) {
 
         readExpenseDataRowMapListFromExcel = singleTonExpenseTrackerExcelUtil.readExpenseTransactionsFromExcelUtil(EXPENSE, expenseColumnIndices, new ArrayList<HashMap<String, String>>(), sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readExpenseDataRowMapListFromExcel :" + readExpenseDataRowMapListFromExcel);
 
-        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        readTypesListandSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPES, sharedVariables.getFilePath());
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readTypesListandSubTypesMapFromExcelUtil" + readTypesListandSubTypesMapFromExcelUtil);
 
       /*  readAllPaymentTypeListFromSheet = readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -170,7 +203,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         paymentToSubPaymentMap = readTypesListandSubTypesMapFromExcelUtil.get(readTypesListandSubTypesMapFromExcelUtil.keySet().iterator().next());// to get value of key present at 0 index in map
         System.out.println("inside ViewAllButtonActivity class, inside loadData (), paymentToSubPaymentMap" + paymentToSubPaymentMap);
 
-        readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap, "AppHomeActivity class");
+        readAllSubPaymentListFromSheet = singleTonExpenseTrackerExcelUtil.readAllSubPaymentsFromExcel(paymentToSubPaymentMap);
         System.out.println("inside ViewAllButtonActivity class, inside loadData () , readAllSubPaymentListFromSheet :" + readAllSubPaymentListFromSheet);
 
     }
@@ -225,6 +258,7 @@ public class ViewAllButtonActivity extends AppCompatActivity {
         btnTransactions.setBackgroundResource(R.drawable.button_selector_transactions); // Selected state
         btnPayments.setBackgroundResource(R.drawable.button_selector_payments); // Unselected state
     }
+
     private void showPayments() {
         transactionsList.setVisibility(View.GONE);
         paymentsList.setVisibility(View.VISIBLE);

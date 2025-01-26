@@ -1,6 +1,6 @@
 package com.example.expensetracker;
 
-import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPE;
+import static com.example.expensetracker.utilities.HeadingConstants.PAYMENT_TYPES;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,7 +49,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
     }
 
     private void loadDataFromExcel(SingleTonSharedLoginVariables sharedVariables) {
-        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPE, sharedVariables.getFilePath());
+        readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil = singleTonExpenseTrackerExcelUtil.readTypesListandSubTypesMapFromExcelUtil(PAYMENT_TYPES, sharedVariables.getFilePath());
         System.out.println("inside PaymentTypeActivity class, inside loadDataFromExcel () , readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil :" + readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil);
 
         readPaymentListFromSheet = readAllPaymentTypesListandAllPaymentSubTypesMapFromExcelUtil.keySet().iterator().next();
@@ -111,7 +111,7 @@ public class PaymentTypeActivity extends AppCompatActivity {
             String payment = editText.getText().toString();
             if (!payment.isEmpty() && !readPaymentListFromSheet.contains(payment)) {
                 //  ExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE,payment, readPaymentListfromSheet, paymentToSubpaymentMap);//edit
-                singleTonExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPE, payment, readPaymentListFromSheet, paymentToPaymentSubTypesMap, sharedVariables.getFilePath());//edit
+                singleTonExpenseTrackerExcelUtil.writeTypesToExcelUtil(PAYMENT_TYPES, payment, readPaymentListFromSheet, paymentToPaymentSubTypesMap, sharedVariables.getFilePath());//edit
                 paymentAdapter.notifyDataSetChanged();
                 // setupAdapter(); //testing to refresh adapter even after notifying
             }
